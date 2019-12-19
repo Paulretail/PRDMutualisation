@@ -107,3 +107,4 @@ def distance(s_loc_x_p, s_loc_y_p, nb_prod, nb_clients_max):
                 for s2 in range(0, len(s_loc_x_p[p2, :])):
                     matrice_dist[p1, s1, p2, s2] = norm_l2(s_loc_x_p[p1, s1], s_loc_y_p[p1, s1], s_loc_x_p[p2, s2], s_loc_y_p[p2, s2])
     return matrice_dist
+:)
