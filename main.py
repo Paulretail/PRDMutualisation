@@ -4,11 +4,13 @@ Created on Tue Aug 27 11:51:12 2019
 
 @author: gaetan.galisot
 """
+import sys
 
 import FctModel
 import VisuResult
 import Donnee
 import FctClustering
+import ParserDonnee
 import numpy as np
 
 
@@ -25,8 +27,25 @@ detour_max = 0.7
 
 nb_clusters = nb_prod//2  # pour la fonction clustering
 
+if len(sys.argv) > 1:
+    ClassDonnee = ParserDonnee.parse(str(sys.argv[1]))
+    nb_prod = ClassDonnee.nb_prod
+    nb_clusters = nb_prod // 2  # pour la fonction clustering
+else:
+    ClassDonnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
 
-ClassDonnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
+
+print("nb_prod : " + str(ClassDonnee.nb_prod))
+print("nb_clients_p : " + str(ClassDonnee.nb_clients_p))
+print("nb_clients_max : " + str(ClassDonnee.nb_clients_max))
+print("qte_p : " + str(ClassDonnee.qte_p))
+print("windows_a_p : " + str(ClassDonnee.windows_a_p))
+print("windows_b_p : " + str(ClassDonnee.windows_b_p))
+print("s_loc_x_p : " + str(ClassDonnee.s_loc_x_p))
+print("s_loc_y_p : " + str(ClassDonnee.s_loc_y_p))
+print("capacite_p : " + str(ClassDonnee.capacite_p))
+#print("dist : " + str(ClassDonnee.dist))
+print("detour_max : " + str(ClassDonnee.detour_max))
 
 
 # Résolution du problème pour chaque producteurs
