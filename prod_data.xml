@@ -1,6 +1,6 @@
 <donnee>
    <producteur>
-      <capacite>21</capacite>
+      <capacite>47</capacite>
       <locationxprod>22.5</locationxprod>
       <locationyprod>32.4</locationyprod>
       <detourmax>0.7</detourmax>
@@ -34,7 +34,7 @@
       </client>
    </producteur>
    <producteur>
-      <capacite>34</capacite>
+      <capacite>39</capacite>
       <locationxprod>29.5</locationxprod>
       <locationyprod>4.4</locationyprod>
       <detourmax>0.7</detourmax>
@@ -65,6 +65,108 @@
          <windowsb>90300</windowsb>
          <locationxclient>51.1</locationxclient>
          <locationyclient>24.5</locationyclient>
+      </client>
+   </producteur>
+   <producteur>
+      <capacite>47</capacite>
+      <locationxprod>12.5</locationxprod>
+      <locationyprod>85.4</locationyprod>
+      <detourmax>0.7</detourmax>
+      <client>
+         <quantite>9</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>6.3</locationxclient>
+         <locationyclient>89.7</locationyclient>
+      </client>
+      <client>
+         <quantite>5</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>17</locationxclient>
+         <locationyclient>99</locationyclient>
+      </client>
+      <client>
+         <quantite>8</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>20.8</locationxclient>
+         <locationyclient>78.3</locationyclient>
+      </client>
+      <client>
+         <quantite>17</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>22.1</locationxclient>
+         <locationyclient>87.5</locationyclient>
+      </client>
+   </producteur>
+   <producteur>
+      <capacite>42</capacite>
+      <locationxprod>78.5</locationxprod>
+      <locationyprod>44.4</locationyprod>
+      <detourmax>0.7</detourmax>
+      <client>
+         <quantite>11</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>83.3</locationxclient>
+         <locationyclient>66.7</locationyclient>
+      </client>
+      <client>
+         <quantite>12</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>63</locationxclient>
+         <locationyclient>71</locationyclient>
+      </client>
+      <client>
+         <quantite>13</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>84.8</locationxclient>
+         <locationyclient>67.3</locationyclient>
+      </client>
+      <client>
+         <quantite>15</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>71.1</locationxclient>
+         <locationyclient>84.5</locationyclient>
+      </client>
+   </producteur>
+   <producteur>
+      <capacite>37</capacite>
+      <locationxprod>22.5</locationxprod>
+      <locationyprod>81.4</locationyprod>
+      <detourmax>0.7</detourmax>
+      <client>
+         <quantite>7</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>35.3</locationxclient>
+         <locationyclient>74.7</locationyclient>
+      </client>
+      <client>
+         <quantite>11</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>12</locationxclient>
+         <locationyclient>71</locationyclient>
+      </client>
+      <client>
+         <quantite>10</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>23.8</locationxclient>
+         <locationyclient>87.3</locationyclient>
+      </client>
+      <client>
+         <quantite>14</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>14.1</locationxclient>
+         <locationyclient>74.5</locationyclient>
       </client>
    </producteur>
 </donnee>
