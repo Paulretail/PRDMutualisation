@@ -48,26 +48,31 @@ print("capacite_p : " + str(ClassDonnee.capacite_p))
 print("detour_max : " + str(ClassDonnee.detour_max))
 '''
 
-
-# Résolution du problème pour chaque producteurs
+# Résolution du problème pour chaque producteurs (sans mutualisation)
 modMono = FctModel.ModelMonoProd(ClassDonnee)
 optMono = modMono.modelCreationSolve()
 print("optMono", optMono)
+# Résolution du problème sans cluster avec méthode exacte
+# TODO
 
+# Résolution du problème sans cluster avec méthode aprochée
+# TODO
 
 # Clustering des producteurs
 init = FctClustering.ClusteringDistances(ClassDonnee, nb_clusters)
 clusters_tab = np.zeros(nb_prod)
 clusters_tab = init.ClusteringDistancesSolve()  # clusters_tab[p]=k ==> p est dans le cluster k
 
-
+print("1")
 # affichage des clusters
 print("clusters_tab : ", clusters_tab)
 
-
 optMulti = np.zeros(nb_clusters) 
 # Résolution pour chaque cluster
+
+print("1")
 for cluster_num in range(0, nb_clusters):
+    # Résolution avec méthode exacte
     mod = FctModel.NotreModel(ClassDonnee, clusters_tab, cluster_num, optMono)
     mdl = mod.modelCreation()
     solution = mod.modelSolve()
@@ -82,4 +87,9 @@ for cluster_num in range(0, nb_clusters):
     Fenetre = VisuResult.visuPlot(ClassDonnee, mdl, solution, clusters_tab, cluster_num)
     Fenetre.afficheResult()
 
-print('Ratio = ', (np.sum(optMulti)/np.sum(optMono))-1)
+    # Résolution avec méthode approchée
+    # TODO
+
+print('optMono = ', optMono, 'sum optMono = ', np.sum(optMono))
+print('optMulti = ', optMulti, 'sum optMulti = ', np.sum(optMulti))
+print('Ratio = ', (1-(np.sum(optMulti)/np.sum(optMono)))*100, "%")

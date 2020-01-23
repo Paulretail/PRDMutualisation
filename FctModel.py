@@ -84,9 +84,8 @@ class NotreModel:
         # self.dist = ClassDonnee.dist
         # self.detour_max = ClassDonnee.detour_max
         # self.optMono = optMono
-        
-        clusters_tab_prod = np.where(np.in1d(clusters_tab, [cluster_num]))[0]
 
+        clusters_tab_prod = np.where(np.in1d(clusters_tab, [cluster_num]))[0]
         self.nb_prod = len(clusters_tab_prod)
         self.nb_clients_p = ClassDonnee.nb_clients_p[clusters_tab_prod]
         self.qte_p = ClassDonnee.qte_p[clusters_tab_prod, :]
@@ -103,12 +102,13 @@ class NotreModel:
 
         self.detour_max = ClassDonnee.detour_max
         self.optMono = optMono[clusters_tab_prod]
-
+        print("numProd -- nbClient")
         for p0 in range(0, self.nb_prod):
-            print(p0, "-- ", self.nb_clients_p[p0])
+            print(p0, "--", self.nb_clients_p[p0])
      
     def modelCreation(self):
-            
+        """construit le problème"""
+
         M = 10000
         # ------------- BEGIN: Create the mode ----------------------------------------
 
@@ -122,7 +122,7 @@ class NotreModel:
         Ydimensions = [(p0, p1, s1)for p0 in range(0, self.nb_prod) for p1 in range(0, self.nb_prod) for s1 in range(0, self.nb_clients_p[p1])]
         y = mdl.binary_var_dict(Ydimensions, name="y")  # y_kk'j si k passe par j qui appartient à k'
 
-        Ddimensions = [(p0, p1, s1)for p0 in range(0,self.nb_prod) for p1 in range(0,self.nb_prod) for s1 in range(0, self.nb_clients_p[p1])]
+        Ddimensions = [(p0, p1, s1)for p0 in range(0, self.nb_prod) for p1 in range(0, self.nb_prod) for s1 in range(0, self.nb_clients_p[p1])]
         D = mdl.continuous_var_dict(Ddimensions, name="D")
         R = mdl.continuous_var_list(self.nb_prod, name='R')  # date retour
         Tour = mdl.continuous_var_list(self.nb_prod, name='Tour')  # durée de tour (date départ - date d'arrivée)
@@ -213,6 +213,7 @@ class NotreModel:
         return mdl
 
     def modelSolve(self, affiche=True):
+        """résoud le problème avec une méthode exacte"""
         solution = self.mdl.solve()
         #            if affiche == True:
         #                print(self.mdl.solve_details)

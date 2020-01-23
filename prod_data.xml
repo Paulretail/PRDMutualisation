@@ -34,7 +34,7 @@
       </client>
    </producteur>
    <producteur>
-      <capacite>39</capacite>
+      <capacite>54</capacite>
       <locationxprod>29.5</locationxprod>
       <locationyprod>4.4</locationyprod>
       <detourmax>0.7</detourmax>
@@ -102,7 +102,7 @@
       </client>
    </producteur>
    <producteur>
-      <capacite>42</capacite>
+      <capacite>64</capacite>
       <locationxprod>78.5</locationxprod>
       <locationyprod>44.4</locationyprod>
       <detourmax>0.7</detourmax>
@@ -136,7 +136,7 @@
       </client>
    </producteur>
    <producteur>
-      <capacite>37</capacite>
+      <capacite>50</capacite>
       <locationxprod>22.5</locationxprod>
       <locationyprod>81.4</locationyprod>
       <detourmax>0.7</detourmax>
@@ -167,6 +167,33 @@
          <windowsb>90300</windowsb>
          <locationxclient>14.1</locationxclient>
          <locationyclient>74.5</locationyclient>
+      </client>
+   </producteur>
+   <producteur>
+      <capacite>37</capacite>
+      <locationxprod>20</locationxprod>
+      <locationyprod>55</locationyprod>
+      <detourmax>0.7</detourmax>
+      <client>
+         <quantite>8</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>30</locationxclient>
+         <locationyclient>58</locationyclient>
+      </client>
+      <client>
+         <quantite>14</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>25</locationxclient>
+         <locationyclient>65</locationyclient>
+      </client>
+      <client>
+         <quantite>13</quantite>
+         <windowsa>-89700</windowsa>
+         <windowsb>90300</windowsb>
+         <locationxclient>33</locationxclient>
+         <locationyclient>54</locationyclient>
       </client>
    </producteur>
 </donnee>

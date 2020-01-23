@@ -37,8 +37,8 @@ class visuPlot:
         color = ['red', 'blue', 'green', 'black', 'yellow', 'purple', 'orange', 'grey']
         for p0 in range(0, self.nb_prod):
             plt.plot(self.s_loc_x_p[p0, 0], self.s_loc_y_p[p0, 0], color=color[p0], marker='o', linestyle='')
-            for s1 in range(1, self.nb_clients_p[p0]):
-                plt.plot(self.s_loc_x_p[p0, s1], self.s_loc_y_p[p0, s1], color=color[p0], marker='*',
+            for s1 in range(0, self.nb_clients_p[p0]):
+                plt.plot(self.s_loc_x_p[p0, s1+1], self.s_loc_y_p[p0, s1+1], color=color[p0], marker='*',
                          linestyle='')  # sites de p0
 
         # for i in range(m):
@@ -57,7 +57,7 @@ class visuPlot:
 
             for k, v in sol_vars_ones.items():
                 # split based on _
-                var_val = str(k).split("_");
+                var_val = str(k).split("_")
                 if var_val[0] == "x":  # treat th case of x variables
                     p0 = int(var_val[1])
                     p1 = int(var_val[2])
@@ -66,6 +66,7 @@ class visuPlot:
                     s2 = int(var_val[5])
                     plt.plot([self.s_loc_x_p[p1, s1], self.s_loc_x_p[p2, s2]],
                              [self.s_loc_y_p[p1, s1], self.s_loc_y_p[p2, s2]], color=color[p0])
+            plt.show()
         else:
             print("MIP is not solved or infeasible")
             print(self.mdl.solve_details)
