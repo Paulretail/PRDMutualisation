@@ -37,8 +37,8 @@ class visuPlot:
         color = ['red', 'blue', 'green', 'black', 'yellow', 'purple', 'orange', 'grey']
         for p0 in range(0, self.nb_prod):
             plt.plot(self.s_loc_x_p[p0, 0], self.s_loc_y_p[p0, 0], color=color[p0], marker='o', linestyle='')
-            for s1 in range(0, self.nb_clients_p[p0]):
-                plt.plot(self.s_loc_x_p[p0, s1+1], self.s_loc_y_p[p0, s1+1], color=color[p0], marker='*',
+            for s1 in range(1, self.nb_clients_p[p0]):
+                plt.plot(self.s_loc_x_p[p0, s1], self.s_loc_y_p[p0, s1], color=color[p0], marker='*',
                          linestyle='')  # sites de p0
 
         # for i in range(m):

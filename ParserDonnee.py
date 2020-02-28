@@ -14,11 +14,11 @@ def parse(nom_fichier):
     nb_clients_p = np.zeros(nb_prod, dtype=int)
     nb_clients_max = 0
     for i in range(0, nb_prod):     # trouve le nombre max de client
-        nb_clients_p[i] = len(root.findall('producteur')[i].findall('client'))
+        nb_clients_p[i] = len(root.findall('producteur')[i].findall('client'))+1
         if nb_clients_p[i] > nb_clients_max:
             nb_clients_max = nb_clients_p[i]
-    print("nb clients : ",nb_clients_p)
-    nb_clients_max = nb_clients_max + 1
+    print("nb clients : ", nb_clients_p)
+    nb_clients_max = nb_clients_max
     qte_p = np.zeros((nb_prod, nb_clients_max))
     windows_a_p = np.zeros((nb_prod, nb_clients_max))
     windows_b_p = np.zeros((nb_prod, nb_clients_max))

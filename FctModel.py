@@ -31,6 +31,8 @@ class ModelMonoProd:
             
         M = 1000000
 
+        mono_chemins = [[] for _ in range(self.nb_prod)]
+
         # ------------- BEGIN: Create the mode ----------------------------------------
         opt = np.zeros(self.nb_prod)
         for p in range(0, self.nb_prod):
@@ -39,9 +41,13 @@ class ModelMonoProd:
             mdl = Model('4C')
 
             # Variables
+
+
             Xdimensions = [(i, j) for i in range(0, self.nb_clients_p[p]) for j in range(0, self.nb_clients_p[p])]
             x = mdl.integer_var_dict(Xdimensions, name="x")
+            # date arrivé
             D = mdl.continuous_var_list(self.nb_clients_p[p], name='D')
+            # date de retour
             d_retour = mdl.continuous_var(name='d_f')
 
             # Objective function
@@ -50,23 +56,44 @@ class ModelMonoProd:
 
             # Constraints
 
+            # un arc sortant et rentrant pour chaque site
             mdl.add_constraints(mdl.sum(x[i, j] for i in range(0, self.nb_clients_p[p]) if i != j) == 1 for j in range(0, self.nb_clients_p[p]))
-
             mdl.add_constraints(mdl.sum(x[j, i] for i in range(0, self.nb_clients_p[p]) if i != j) == 1 for j in range(0, self.nb_clients_p[p]))
 
+            # passer dans un certain ordre
             mdl.add_constraints(D[j] >= D[i] + self.dist[p, i, p, j] - M * (1 - x[i, j]) for i in range(0, self.nb_clients_p[p]) for j in range(1, self.nb_clients_p[p]))
 
+            # respect fenetre de temps
             mdl.add_constraints(D[j] >= self.windows_a_p[p, j] for j in range(0, self.nb_clients_p[p]))
 
             mdl.add_constraints(D[j] <= self.windows_b_p[p, j] for j in range(0, self.nb_clients_p[p]))
 
+            # calculer la date de retour
             mdl.add_constraints(d_retour >= D[i] + self.dist[p, i, p, 0] for i in range(0, self.nb_clients_p[p]))
 
             # mdl.print_information()
             solution = mdl.solve()
+
             opt[p] = solution.get_objective_value()
-             
-        return opt
+
+            # à partir d'une solution retourne un chemin pour chaque producteur
+
+            dict_sol = {}  # dictionnaire contenant clé : le point de départ ; valeur : le point de départ
+            # remplie le dictionnaire à partir des données de la solution
+            for k, j in solution.as_dict().items():
+                var_val = str(k).split("_")
+                if var_val[0] == "x":
+                    dict_sol[int(var_val[1])] = int(var_val[2])
+
+            # remplie le chemin du producteur p, le chemin cmmence et fini par ce producteur et passe par tous ses clients
+            dernier_point = 0
+            mono_chemins[p].append((p, 0))
+            for _ in range(len(dict_sol) - 1):
+                mono_chemins[p].append((p, dict_sol[dernier_point]))
+                dernier_point = dict_sol[dernier_point]
+            mono_chemins[p].append((p, 0))
+
+        return opt, mono_chemins
 
 
 class NotreModel:  
@@ -114,17 +141,22 @@ class NotreModel:
 
         mdl = Model('4C')
 
-        # Variables
+        # Declaration des variables
 
+        # le producteur p0 fait l'arc reliant le site s1 du producteur p1 au site s2 du producteur p2
         Xdimensions = [(p0, p1, s1, p2, s2) for p0 in range(0, self.nb_prod) for p1 in range(0, self.nb_prod) for s1 in range(0, self.nb_clients_p[p1]) for p2 in range(0, self.nb_prod) for s2 in range(0, self.nb_clients_p[p2])]
         x = mdl.integer_var_dict(Xdimensions, name="x")
 
+        # somme des x sur une ligne fait 1
+
+        # le producteur p0 visite le client s1 du producteur p1
         Ydimensions = [(p0, p1, s1)for p0 in range(0, self.nb_prod) for p1 in range(0, self.nb_prod) for s1 in range(0, self.nb_clients_p[p1])]
         y = mdl.binary_var_dict(Ydimensions, name="y")  # y_kk'j si k passe par j qui appartient à k'
 
+        # date de de livraison du producteur p0 au site s1 du produceur p1
         Ddimensions = [(p0, p1, s1)for p0 in range(0, self.nb_prod) for p1 in range(0, self.nb_prod) for s1 in range(0, self.nb_clients_p[p1])]
         D = mdl.continuous_var_dict(Ddimensions, name="D")
-        R = mdl.continuous_var_list(self.nb_prod, name='R')  # date retour
+        R = mdl.continuous_var_list(self.nb_prod, name='R')  # date retour/ date de fin de tournée
         Tour = mdl.continuous_var_list(self.nb_prod, name='Tour')  # durée de tour (date départ - date d'arrivée)
 
         # Objective function
@@ -132,13 +164,13 @@ class NotreModel:
         mdl.minimize(mdl.sum(Tour[p0] for p0 in range(0, self.nb_prod)))
 
         # Constraints
-        # AZ 1 consevation du flot
+        # AZ 1 conservation du flot
         for p0 in range(0, self.nb_prod):
             for p1 in range(0, self.nb_prod):
                 for s1 in range(0, self.nb_clients_p[p1]):
                     mdl.add_constraint(mdl.sum(x[p0, p1, s1, p2, s2] for p2 in range(0, self.nb_prod) for s2 in range(0, self.nb_clients_p[p2]) if p1 != p2 or s1 != s2) == mdl.sum(x[p0, p2, s2, p1, s1] for p2 in range(0, self.nb_prod) for s2 in range(0, self.nb_clients_p[p2]) if p1 != p2 or s1 != s2))
 
-        # AZ 2 tous les sites sont visités (p1,s1). cela signifie egalement que tous les producteurs sont visités car s1 commence à 0
+        # AZ 2 tous les sites sont visités (p1,s1)
         for p1 in range(0, self.nb_prod):
             for s1 in range(1, self.nb_clients_p[p1]):
                 mdl.add_constraint(mdl.sum(y[p0, p1, s1] for p0 in range(0, self.nb_prod)) == 1)
@@ -149,7 +181,7 @@ class NotreModel:
                 for s1 in range(1, self.nb_clients_p[p1]):
                     mdl.add_constraint(y[p0, p1, 0] >= y[p0, p1, s1])
 
-        # AZ 4liaison entre les variables x et y. Si une tournée de p0 passe par (p1,s1) alors p0 visite (p1,s1)
+        # AZ 4 liaison entre les variables x et y. Si une tournée de p0 passe par (p1,s1) alors p0 visite (p1,s1)
         for p0 in range(0, self.nb_prod):
             for p1 in range(0, self.nb_prod):
                 for s1 in range(0, self.nb_clients_p[p1]):
@@ -168,10 +200,9 @@ class NotreModel:
                             if p2 != p0 or s2 != 0:
                                 mdl.add_constraint(D[p0, p2, s2] >= D[p0, p1, s1] + self.dist[p1, s1, p2, s2] - M*(1 - x[p0, p1, s1, p2, s2]))
 
-        # AZ 7 retourne la durée de la tournée pour chaque producteur
+        # AZ 7 retourne la date de retour pour chaque producteur
         #            for p0 in range(0,self.nb_prod):
         #                mdl.add_constraint(R[p0] ==  mdl.sum(self.dist[p1,s1,p2,s2] * x[p0,p1,s1,p2,s2] for p1 in range(0,self.nb_prod) for s1 in range(0,self.nb_clients_p[p1]) for p2 in range(0,self.nb_prod) for s2 in range(0,self.nb_clients_p[p2])))
-
         for p0 in range(0, self.nb_prod):
             for p2 in range(0, self.nb_prod):
                 for s2 in range(0, self.nb_clients_p[p2]):

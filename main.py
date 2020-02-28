@@ -12,6 +12,7 @@ import Donnee
 import FctClustering
 import ParserDonnee
 import numpy as np
+import Heuristique
 
 
 nb_prod = 10
@@ -28,11 +29,11 @@ detour_max = 0.7
 nb_clusters = nb_prod//2  # pour la fonction clustering
 
 if len(sys.argv) > 1:
-    ClassDonnee = ParserDonnee.parse(str(sys.argv[1]))
-    nb_prod = ClassDonnee.nb_prod
+    classe_donnee = ParserDonnee.parse(str(sys.argv[1]))
+    nb_prod = classe_donnee.nb_prod
     nb_clusters = nb_prod // 2  # pour la fonction clustering
 else:
-    ClassDonnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
+    classe_donnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
 
 '''
 print("nb_prod : " + str(ClassDonnee.nb_prod))
@@ -49,31 +50,32 @@ print("detour_max : " + str(ClassDonnee.detour_max))
 '''
 
 # Résolution du problème pour chaque producteurs (sans mutualisation)
-modMono = FctModel.ModelMonoProd(ClassDonnee)
-optMono = modMono.modelCreationSolve()
+modMono = FctModel.ModelMonoProd(classe_donnee)
+optMono, mono_chemin = modMono.modelCreationSolve()
 print("optMono", optMono)
-# Résolution du problème sans cluster avec méthode exacte
-# TODO
 
 # Résolution du problème sans cluster avec méthode aprochée
 # TODO
+heuristique = Heuristique.Heuristique(optMono, classe_donnee, mono_chemin)
+heuristique.heuristique_1()
+
 
 # Clustering des producteurs
-init = FctClustering.ClusteringDistances(ClassDonnee, nb_clusters)
+init = FctClustering.ClusteringDistances(classe_donnee, nb_clusters)
 clusters_tab = np.zeros(nb_prod)
 clusters_tab = init.ClusteringDistancesSolve()  # clusters_tab[p]=k ==> p est dans le cluster k
 
-print("1")
+
 # affichage des clusters
 print("clusters_tab : ", clusters_tab)
 
 optMulti = np.zeros(nb_clusters) 
 # Résolution pour chaque cluster
 
-print("1")
+
 for cluster_num in range(0, nb_clusters):
     # Résolution avec méthode exacte
-    mod = FctModel.NotreModel(ClassDonnee, clusters_tab, cluster_num, optMono)
+    mod = FctModel.NotreModel(classe_donnee, clusters_tab, cluster_num, optMono)
     mdl = mod.modelCreation()
     solution = mod.modelSolve()
     
@@ -84,12 +86,12 @@ for cluster_num in range(0, nb_clusters):
     print('objective = ', (solution.get_objective_value()/np.sum(optMonoCluster))-1)
     
     # Affiche
-    Fenetre = VisuResult.visuPlot(ClassDonnee, mdl, solution, clusters_tab, cluster_num)
+    Fenetre = VisuResult.visuPlot(classe_donnee, mdl, solution, clusters_tab, cluster_num)
     Fenetre.afficheResult()
 
     # Résolution avec méthode approchée
     # TODO
 
-print('optMono = ', optMono, 'sum optMono = ', np.sum(optMono))
-print('optMulti = ', optMulti, 'sum optMulti = ', np.sum(optMulti))
+print('optMono = ', optMono, ', sum optMono = ', np.sum(optMono))
+print('optMulti = ', optMulti, ', sum optMulti = ', np.sum(optMulti))
 print('Ratio = ', (1-(np.sum(optMulti)/np.sum(optMono)))*100, "%")
