@@ -6,6 +6,7 @@ Created on Thu Nov  7 09:29:16 2019
 """
 
 import numpy as np
+import random
 from matplotlib import pyplot as plt
 from sklearn.datasets.samples_generator import make_blobs
 from sklearn.cluster import KMeans
@@ -37,7 +38,8 @@ class ClusteringDistances:
 
         centre_prod = np.zeros((self.nb_prod, 2))
         centre_prod = centreFct(self.nb_prod, self.s_loc_x_p, self.s_loc_y_p, self.nb_clients_p)
-        color = ['red', 'blue', 'green', 'black', 'yellow', 'purple', 'orange', 'grey', 'cyan', 'pink', 'violet', 'navy', 'lime', 'aquamarine', 'olivedrab', 'indigo']
+        color = self.generate_colors(self.nb_prod)
+
         # affichage du centre pour chaque producteur
         for p in range(0, self.nb_prod):
             plt.scatter(self.s_loc_x_p[p, :1], self.s_loc_y_p[p, :1], marker='o', c=color[p])
@@ -74,6 +76,10 @@ class ClusteringDistances:
 
         return kmeans.labels_
 
-    def generate_colors(N=5):
-        print("test")
-        return
+    def generate_colors(self, n):
+        ret = []
+        r = lambda: random.randint(0, 255)
+        for i in range(n):
+            color = '#%02X%02X%02X' % (r(), r(), r())
+            ret.append(color)
+        return ret

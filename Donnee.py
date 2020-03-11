@@ -50,8 +50,37 @@ class dataMultiProd:
         self.capacite_p = capacite_p            # capacite de chacun des producteurs
         self.dist = dist                        # matrice des distances
         self.detour_max = detour_max            # detour maximum accepte, en pourcentage suplémentaire par rapport a sa solution idéale
-         
-         
+
+    def fctReturnDictCreationMultiProducteur(self):
+        data_dict = {}
+        producteur_list = []
+        for p0 in range(0, self.nb_prod):
+
+            producteur_dict = {}
+            producteur_dict['id_producteur'] = p0
+            producteur_dict['coordonnes'] = [self.s_loc_x_p[p0, 0], self.s_loc_y_p[p0, 0]]
+            producteur_dict['capacite'] = self.capacite_p[p0]
+            producteur_dict['fenetre_disponiblite'] = [self.windows_a_p[p0, 0], self.windows_b_p[p0, 0]]
+            producteur_dict['detour_max'] = self.detour_max
+            producteur_dict['nb_clients'] = int(self.nb_clients_p[p0])
+
+            clients_list = []
+            for s1 in range(1, self.nb_clients_p[p0]):
+                clientsP0_dict = {}
+                clientsP0_dict['id_client'] = [p0, s1]
+                clientsP0_dict['coordonnes'] = [self.s_loc_x_p[p0, s1], self.s_loc_y_p[p0, s1]]
+                clientsP0_dict['qte'] = self.qte_p[p0, s1]
+                clientsP0_dict['fenetre_livraison'] = [self.windows_a_p[p0, s1], self.windows_b_p[p0, s1]]
+                clients_list.append(clientsP0_dict)
+
+            producteur_dict['clients'] = clients_list
+            producteur_list.append(producteur_dict)
+
+        data_dict['liste_producteurs'] = producteur_list
+        data_dict['matrice_distances'] = self.dist.tolist()
+        return data_dict
+
+
 def CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max):
    
     nb_clients_p = np.zeros(nb_prod, dtype=int)

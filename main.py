@@ -13,6 +13,7 @@ import FctClustering
 import ParserDonnee
 import numpy as np
 import Heuristique
+import read_JSON
 
 
 nb_prod = 10
@@ -29,24 +30,30 @@ detour_max = 0.7
 nb_clusters = nb_prod//2  # pour la fonction clustering
 
 if len(sys.argv) > 1:
-    classe_donnee = ParserDonnee.parse(str(sys.argv[1]))
-    nb_prod = classe_donnee.nb_prod
-    nb_clusters = nb_prod // 2  # pour la fonction clustering
+    nom_fichier = str(sys.argv[1])
+    if nom_fichier.split(".")[-1] == "xml":
+        classe_donnee = ParserDonnee.parse(nom_fichier)
+        nb_prod = classe_donnee.nb_prod
+        nb_clusters = nb_prod // 2  # pour la fonction clustering
+    elif nom_fichier.split(".")[-1] == "json":
+        classe_donnee = read_JSON.read(nom_fichier)
+        nb_prod = classe_donnee.nb_prod
+        nb_clusters = nb_prod // 2  # pour la fonction clustering
 else:
     classe_donnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
 
 '''
-print("nb_prod : " + str(ClassDonnee.nb_prod))
-print("nb_clients_p : " + str(ClassDonnee.nb_clients_p))
-print("nb_clients_max : " + str(ClassDonnee.nb_clients_max))
-print("qte_p : " + str(ClassDonnee.qte_p))
-print("windows_a_p : " + str(ClassDonnee.windows_a_p))
-print("windows_b_p : " + str(ClassDonnee.windows_b_p))
-print("s_loc_x_p : " + str(ClassDonnee.s_loc_x_p))
-print("s_loc_y_p : " + str(ClassDonnee.s_loc_y_p))
-print("capacite_p : " + str(ClassDonnee.capacite_p))
-#print("dist : " + str(ClassDonnee.dist))
-print("detour_max : " + str(ClassDonnee.detour_max))
+print("nb_prod : " + str(classe_donnee.nb_prod))
+print("nb_clients_p : " + str(classe_donnee.nb_clients_p))
+print("nb_clients_max : " + str(classe_donnee.nb_clients_max))
+print("qte_p : " + str(classe_donnee.qte_p))
+print("windows_a_p : " + str(classe_donnee.windows_a_p))
+print("windows_b_p : " + str(classe_donnee.windows_b_p))
+print("s_loc_x_p : " + str(classe_donnee.s_loc_x_p))
+print("s_loc_y_p : " + str(classe_donnee.s_loc_y_p))
+print("capacite_p : " + str(classe_donnee.capacite_p))
+#print("dist : " + str(classe_donnee.dist))
+print("detour_max : " + str(classe_donnee.detour_max))
 '''
 
 # Résolution du problème pour chaque producteurs (sans mutualisation)
