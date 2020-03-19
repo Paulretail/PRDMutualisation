@@ -4,6 +4,7 @@ Created on Tue Aug 27 12:32:11 2019
 
 @author: gaetan.galisot
 """
+import random
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -41,8 +42,7 @@ class visuPlot:
                 plt.plot(self.s_loc_x_p[p0, s1], self.s_loc_y_p[p0, s1], color=color[p0], marker='*',
                          linestyle='')  # sites de p0
 
-        # for i in range(m):
-        # plt.annotate('$%d,%d$'%(self.s_loc_x[i] + 2, self.s_loc_y[i]), (self.s_loc_x[i] + 2, self.s_loc_y[i]))
+        # affiche le numéro des points
         for p1 in range(0, self.nb_prod):
             for s1 in range(0, self.nb_clients_p[p1]):
                 plt.annotate('$%d,%d$' % (p1, s1), (self.s_loc_x_p[p1, s1], self.s_loc_y_p[p1, s1]))
@@ -70,3 +70,54 @@ class visuPlot:
         else:
             print("MIP is not solved or infeasible")
             print(self.mdl.solve_details)
+
+
+class visu_plot_heuristique:
+    def __init__(self, class_donnee, chemin):
+
+        self.nb_prod = class_donnee.nb_prod
+        self.nb_clients_p = class_donnee.nb_clients_p
+        self.qte_p = class_donnee.qte_p
+        self.windows_a_p = class_donnee.windows_a_p
+        self.windows_b_p = class_donnee.windows_b_p
+
+        self.s_loc_x_p = class_donnee.s_loc_x_p
+
+        self.s_loc_y_p = class_donnee.s_loc_y_p
+        self.capacite_p = class_donnee.capacite_p
+
+        self.dist = class_donnee.dist
+        self.chemin = chemin
+
+    def afficher_donnees(self):
+        couleurs = self.generer_couleurs(self.nb_prod)
+
+        # affichage du centre pour chaque producteur
+        for p in range(0, self.nb_prod):
+            plt.scatter(self.s_loc_x_p[p, :1], self.s_loc_y_p[p, :1], marker='o', c=couleurs[p])
+            plt.scatter(self.s_loc_x_p[p, 1:self.nb_clients_p[p] + 1], self.s_loc_y_p[p, 1:self.nb_clients_p[p] + 1],
+                        marker='x', c=couleurs[p])
+        plt.title('Données')
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.show()
+
+    def afficher_result_heuristique(self):
+
+        # TODO mettre ça dans une boucle comme dans le main
+        plt.figure()
+        couleurs = ['red', 'blue', 'green', 'black', 'yellow', 'purple', 'orange', 'grey']
+        for p0 in range(self.nb_prod):
+            plt.plot(self.s_loc_x_p[p0, 0], self.s_loc_y_p[p0, 0], color=couleurs[p0], marker='o', linestyle='')
+            for s1 in range(1, len(self.chemin[p0]) - 1):
+                plt.plot(self.s_loc_x_p[self.chemin[p0][s1][0], self.chemin[p0][s1][1]], self.s_loc_y_p[self.chemin[p0][s1][0], self.chemin[p0][s1][1]], color=couleurs[p0], marker='*', linestyle='')  # sites de p0
+
+        plt.show()
+
+    def generer_couleurs(self, n):
+        ret = []
+        r = lambda: random.randint(0, 255)
+        for i in range(n):
+            color = '#%02X%02X%02X' % (r(), r(), r())
+            ret.append(color)
+        return ret

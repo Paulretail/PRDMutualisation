@@ -44,7 +44,7 @@ class ClusteringDistances:
         for p in range(0, self.nb_prod):
             plt.scatter(self.s_loc_x_p[p, :1], self.s_loc_y_p[p, :1], marker='o', c=color[p])
             plt.scatter(self.s_loc_x_p[p, 1:self.nb_clients_p[p]+1], self.s_loc_y_p[p, 1:self.nb_clients_p[p]+1], marker='x', c=color[p])
-            plt.scatter(centre_prod[p, 0], centre_prod[p, 1], s=300, c='red', marker='8')
+            #plt.scatter(centre_prod[p, 0], centre_prod[p, 1], s=300, c='red', marker='8')
 
         plt.title('Centre de chaque producteur')
         plt.xlabel('X')

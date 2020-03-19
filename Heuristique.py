@@ -24,8 +24,13 @@ class Heuristique:
         # chaque point est représenté par un tuple permettant de savoir à quel point il correspondait sur les données initiales
         self.chemin = mono_chemin
 
-        # optimum pour chacun des producteurs sans cooperation, permet de calculer leur détour_max
-        self.optMono = opt_mono
+        # tableau représentant la capacité restante sur ce chemin
+        self.capacite_restant_p = []
+        for i in range(self.nb_prod):
+            self.capacite_restant_p.append(self.capacite_p[i] - sum(self.qte_p[i]))
+
+        # distance max de chacun des producteurs, calculé à partir de leurs optimum sans cooperation et le detour_max
+        self.detour_max = opt_mono * (1 + class_donnee.detour_max)
 
         # fonction objectif à minimiser
         self.fonc_obj = opt_mono.copy()
@@ -37,112 +42,163 @@ class Heuristique:
             self.prod_dans_chemin[i][i] = self.nb_clients_p[i] - 1
         # TODO et un tableau faisant l'opposé dim : nbProd
 
-    def heuristique_1(self):
-        # TODO répéter cela i fois
-        #for _ in range(5):
-        # choisit aléatoirement un producteur à qui on enlevera un client de son chemin
-        rand_prod = random.randint(0, self.nb_prod - 1)
-
-        # vérifie que le producteur ne soit pas seul sur son chemin
-        while len(self.chemin[rand_prod]) <= 2:
+    def heuristique(self):
+        pas_ameliore = 0
+        fonc_obj_initial = np.sum(self.fonc_obj)
+        fonc_obj_mono = np.sum(self.fonc_obj)
+        best_sol = np.sum(self.fonc_obj)
+        compteur = 0
+        best_iteration = 0
+        best_chemin = self.chemin
+        while compteur <= 500:  # TODO revoir le critere d'arret (20 itteration sans ameliorer best sol me parrait bien)
+            # choisit aléatoirement un producteur à qui on enlevera un client de son chemin
             rand_prod = random.randint(0, self.nb_prod - 1)
 
-        # selectionne un producteur par lequel le producteur precedent (rand_prod) passe
-        # TODO peut etre amelioré
-        rand_prod_change = random.randint(0, self.nb_prod - 1)
-        while self.prod_dans_chemin[rand_prod][rand_prod_change] == 0:
+            # vérifie que le producteur ne soit pas seul sur son chemin
+            while len(self.chemin[rand_prod]) <= 2:
+                rand_prod = random.randint(0, self.nb_prod - 1)
+
+            # selectionne un producteur par lequel le producteur precedent (rand_prod) passe
+            # TODO peut etre amelioré
             rand_prod_change = random.randint(0, self.nb_prod - 1)
+            while self.prod_dans_chemin[rand_prod][rand_prod_change] == 0:
+                rand_prod_change = random.randint(0, self.nb_prod - 1)
 
-        # nombre de point que l'on va retirer puis insérer
-        # nb_change = random.randint(1, self.prod_dans_chemin[rand_prod][rand_prod_change])
+            # nombre de point que l'on va retirer puis insérer
+            # nb_change = random.randint(1, self.prod_dans_chemin[rand_prod][rand_prod_change])
+            # TODO changer les commentaires ici
 
-        # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
-        client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
+            # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
+            if rand_prod == rand_prod_change:  # TODO justifier et corriger (cela provoque une erreur)
+                print("eeeeeeeeeeeeeeeeeeeeeeeeee",int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
+                print("dzdz",self.nb_clients_p[rand_prod])
+                client_selectionne = random.sample(range(3, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
+            else:
+                client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
 
-        print("client_selectionne", client_selectionne)
+            # liste des clients qui vont être modifiés
+            client_change = [0 for _ in range(int(self.prod_dans_chemin[rand_prod][rand_prod_change]))]
 
-        # liste des clients qui vont être modifiés
-        client_change = [0 for i in range(int(self.prod_dans_chemin[rand_prod][rand_prod_change]))]
+            # remplit client_change avec la liste des clients qui vont être modifiés
+            position = -1
+            for j in range(0, len(self.chemin[rand_prod])):
+                if self.chemin[rand_prod][j][0] == rand_prod_change:
+                    position = position + 1
+                    try:
+                        client_index = client_selectionne.index(position)
+                        client_change[client_index] = self.chemin[rand_prod][j]
+                    except ValueError:
+                        # ne fait rien
+                        pass
 
-        # remplit client_change avec la liste des clients qui vont être modifiés
-        position = -1
-        for j in range(0, len(self.chemin[rand_prod])):
-            if self.chemin[rand_prod][j][0] == rand_prod_change:
-                position = position + 1
-                try:
-                    client_index = client_selectionne.index(position)
-                    client_change[client_index] = self.chemin[rand_prod_change][j]
-                except ValueError:
-                    # ne fait rien
-                    pass
-        print("client_change", client_change)
+            # trouve les producteurs les plus proche du producteur séléctionné aléatoirement
+            list_prod = self.prod_voisin(rand_prod, math.floor(self.nb_prod/2))
 
-        # trouve les producteurs les plus proche du producteur séléctionné aléatoirement
-        list_prod = self.prod_voisin(rand_prod, math.floor(self.nb_prod/2))
+            # en séléctionne un certain nombre aléatoirement dans cette liste
+            list_prod_rand = random.sample(list_prod,  math.floor(self.nb_prod/3))
+            # print("list_prod_rand",list_prod_rand)
+            meilleure_fonc_obj_p = 999999999
+            meilleur_producteur = -1
+            meilleur_nb_client_insert = -1
+            meilleur_insert_position = []
+            for p in list_prod_rand:
+                fonc_obj_p = np.sum(self.fonc_obj)
+                copie_chemin_p = self.chemin[p].copy()
+                copie_distance_p = self.fonc_obj[p]
+                copie_capacite_restant_p = self.capacite_restant_p[p]
+                insert_position = []
+                # Si on n'a pas de producteur a inserer alors insert_position[0] vaut -1
+                insert_position.append(-1)
+                for n in range(len(client_change)):
+                    # effectue la meilleure insertion de client_change[n] dans le chemin copie_chemin_p
+                    resultat = self.meilleur_insert(rand_prod, rand_prod_change, client_change[n], copie_chemin_p, copie_distance_p, copie_capacite_restant_p)
 
-        # en séléctionne un certain nombre aléatoirement dans cette liste
-        list_prod_rand = random.sample(list_prod,  math.floor(self.nb_prod/3))
+                    # Test si l'insertion est valide
+                    if resultat == 0:
+                        # capacité max atteinte : on arrête
+                        break
+                    elif resultat == 1:
+                        # detour max atteint : on arrête
+                        break
+                    elif len(resultat) > 4:
+                        # On doit ajouter le producteur en plus du point
+                        insert_position[0] = resultat[2]
+                        fonc_obj_p = fonc_obj_p + resultat[1] + resultat[3]
+                        copie_capacite_restant_p = resultat[4]
+                        copie_distance_p = resultat[5]
+                        insert_position.append(resultat[0])
+                    else:
+                        # On doit seulement le point
+                        fonc_obj_p = fonc_obj_p + resultat[1]
+                        copie_capacite_restant_p = resultat[2]
+                        copie_distance_p = resultat[3]
+                        insert_position.append(resultat[0])
+                    if fonc_obj_p < meilleure_fonc_obj_p:
+                        # si cette solution est meilleur, on la mémorise
+                        meilleure_fonc_obj_p = fonc_obj_p
+                        meilleur_producteur = p
+                        meilleur_nb_client_insert = n
+                        meilleur_insert_position = insert_position
 
-        meilleure_fonc_obj_p = 999999999
-        meilleur_producteur = -1
-        meilleur_nb_client_insert = -1
-        meilleur_insert_position = []
-        for p in list_prod_rand:
-            fonc_obj_p = np.sum(self.fonc_obj)
-            copie_chemin_p = self.chemin[p].copy()
-            insert_position = []
-            insert_position.append(-1)
-            for n in range(len(client_change)):
-                # effectue la meilleure insertion de client_change[n] dans le chemin copie_chemin_p
-                resultat = self.meilleur_insert(rand_prod, rand_prod_change, client_change[n], copie_chemin_p)
-                if len(resultat) > 2:
-                    insert_position[0] = resultat[2]
-                    fonc_obj_p = fonc_obj_p + resultat[1] + resultat[3]
-                    insert_position.append(resultat[0])
-                else:
-                    fonc_obj_p = fonc_obj_p + resultat[1]
-                    insert_position.append(resultat[0])
-                if fonc_obj_p < meilleure_fonc_obj_p:
-                    meilleure_fonc_obj_p = fonc_obj_p
-                    meilleur_producteur = p
-                    meilleur_nb_client_insert = n
-                    meilleur_insert_position = insert_position
-        print("chemin avant", self.chemin)
-        print("client change", client_change)
-        print("meilleur_nb_client_insert", meilleur_nb_client_insert + 1)
-        print("meilleur_insert_position", meilleur_insert_position)
-        print("meilleur_producteur", meilleur_producteur)
-        print("0", self.fonc_obj)
-        print("0", np.sum(self.fonc_obj))
+            '''print("chemin avant", self.chemin)
+            print("client change", client_change)
+            print("meilleur_nb_client_insert", meilleur_nb_client_insert + 1)
+            print("meilleur_insert_position", meilleur_insert_position)
+            print("meilleur_producteur", meilleur_producteur)
+            print("0", self.fonc_obj)'''
+            # print("0", np.sum(self.fonc_obj))
 
+            # si aucun point en peut être inséré car ne respectant pas les contraintes
+            if len(meilleur_insert_position) < 1:
+                continue
 
-        # On ajoute le premier point
-        client = client_change[0]
-        self.retirer_inserer_client(client, rand_prod, meilleur_producteur, meilleur_insert_position[1])
+            # On ajoute le premier point
+            client = client_change[0]
+            self.retirer_inserer_client(client, rand_prod, meilleur_producteur, meilleur_insert_position[1])
 
-        # Après avoir ajouté le premier point on regarde si on a besoin d'ajouter le producteur
-        if meilleur_insert_position[0] != -1:
-            producteur = (rand_prod_change, 0)
-            client_precedent_insert = self.chemin[meilleur_producteur][meilleur_insert_position[0]]
-            client_suivant_insert = self.chemin[meilleur_producteur][meilleur_insert_position[0] + 1]
+            # Après avoir ajouté le premier point on regarde si on a besoin d'ajouter le producteur
+            if meilleur_insert_position[0] != -1:
+                producteur = (rand_prod_change, 0)
+                client_precedent_insert = self.chemin[meilleur_producteur][meilleur_insert_position[0]]
+                client_suivant_insert = self.chemin[meilleur_producteur][meilleur_insert_position[0] + 1]
 
-            # cout de l'insertion du producteur
-            self.fonc_obj[meilleur_producteur] = self.fonc_obj[meilleur_producteur] + self.dist[producteur[0], producteur[1], client_precedent_insert[0], client_precedent_insert[1]] \
-                            + self.dist[producteur[0], producteur[1], client_suivant_insert[0], client_suivant_insert[1]] \
-                            - self.dist[client_precedent_insert[0], client_precedent_insert[1], client_suivant_insert[0], client_suivant_insert[1]]
+                # cout de l'insertion du producteur
+                self.fonc_obj[meilleur_producteur] = self.fonc_obj[meilleur_producteur] + self.dist[producteur[0], producteur[1], client_precedent_insert[0], client_precedent_insert[1]] \
+                                + self.dist[producteur[0], producteur[1], client_suivant_insert[0], client_suivant_insert[1]] \
+                                - self.dist[client_precedent_insert[0], client_precedent_insert[1], client_suivant_insert[0], client_suivant_insert[1]]
 
-            self.chemin[meilleur_producteur].insert(meilleur_insert_position[0]+1, producteur)
+                self.chemin[meilleur_producteur].insert(meilleur_insert_position[0]+1, producteur)
 
-        # fait les meilleurs changements trouvés précédement
-        for c in range(1, meilleur_nb_client_insert+1):
+            # fait les meilleurs changements trouvés précédement
+            for c in range(1, meilleur_nb_client_insert+1):
 
-            client = client_change[c]
-            self.retirer_inserer_client(client, rand_prod, meilleur_producteur, meilleur_insert_position[c+1])
+                client = client_change[c]
+                self.retirer_inserer_client(client, rand_prod, meilleur_producteur, meilleur_insert_position[c+1])
 
-        print("chemin apres", self.chemin)
-        print("1", self.fonc_obj)
-        print("1", np.sum(self.fonc_obj))
-        # bonus faire des swap pour améliorer la solution
+            '''print("chemin apres", self.chemin)
+            print("1", self.fonc_obj)'''
+            print(compteur, "    ", np.sum(self.fonc_obj))
+
+            # si on a une amélioration on continue sinon on augmente le nombre de fois où l'on n'a pas eu d'amélioration d'affilée
+            # TODO changer les quand on s'arrete et comment on sauvegarde la meilleur solution
+            if fonc_obj_initial < np.sum(self.fonc_obj):
+                pas_ameliore += 1
+            else:
+                if best_sol > np.sum(self.fonc_obj):
+                    # mémorise la meilleur solution
+                    best_sol = np.sum(self.fonc_obj)
+                    best_chemin = self.chemin.copy()
+                    best_iteration = compteur
+                pas_ameliore = 0
+            fonc_obj_initial = np.sum(self.fonc_obj)
+            compteur += 1
+        print("compteur", compteur)
+        print("fonc_obj_mono", fonc_obj_mono)
+        print("best_sol", best_sol)
+        print("ratio : ", (1 - (best_sol / fonc_obj_mono)) * 100, "%")
+        print("best_iteration", best_iteration)
+        print("best_chemin", best_chemin)
+        print("prod_dans_chemin", self.prod_dans_chemin)
 
     def retirer_inserer_client(self, client, prod_retirer, prod_ajouter, position_insert):
         """ Retire puis insére le client
@@ -157,18 +213,22 @@ class Heuristique:
 
         position_insert : int, La position où on va inserer le client
         """
+
         position_client = self.chemin[prod_retirer].index(client)
         client_precedent_retirer = self.chemin[prod_retirer][position_client - 1]
         client_suivant_retirer = self.chemin[prod_retirer][position_client + 1]
 
         # cout de retirer le client
-        self.fonc_obj[prod_retirer] = self.fonc_obj[prod_retirer] - self.dist[client[0], client[1], client_precedent_retirer[0], client_precedent_retirer[1]] \
-                                   - self.dist[client[0], client[1], client_suivant_retirer[0], client_suivant_retirer[1]] \
-                                   + self.dist[client_precedent_retirer[0], client_precedent_retirer[1], client_suivant_retirer[0], client_suivant_retirer[1]]
+        self.fonc_obj[prod_retirer] = self.fonc_obj[prod_retirer] \
+                                      - self.dist[client[0], client[1], client_precedent_retirer[0], client_precedent_retirer[1]] \
+                                      - self.dist[client[0], client[1], client_suivant_retirer[0], client_suivant_retirer[1]] \
+                                      + self.dist[client_precedent_retirer[0], client_precedent_retirer[1], client_suivant_retirer[0], client_suivant_retirer[1]]
 
         self.chemin[prod_retirer].remove(client)
-
         self.prod_dans_chemin[prod_retirer][client[0]] = self.prod_dans_chemin[prod_retirer][client[0]] - 1
+
+        # mise à jour de la capacité restante dans le chemin où on retire le client
+        self.capacite_restant_p[prod_retirer] = self.capacite_restant_p[prod_retirer] + self.qte_p[client[0]][client[1]]
 
         # si le client retiré est le dernier client appartenant au même producteur
         # alors il faut aussi retirer ce producteur de la liste
@@ -197,8 +257,11 @@ class Heuristique:
         self.chemin[prod_ajouter].insert(position_insert + 1, client)
         self.prod_dans_chemin[prod_ajouter][client[0]] = self.prod_dans_chemin[prod_ajouter][client[0]] + 1
 
-    def meilleur_insert(self, prod_retirer, prod_change, client_change, copie_chemin_p):
-        """ Insére client_change à sa meilleur mosition dans copie_chemin_p, insére aussi son producteur si nécessaire
+        # mise à jour de la capacité restante dans le chemin où on ajoute le client
+        self.capacite_restant_p[prod_ajouter] = self.capacite_restant_p[prod_ajouter] - self.qte_p[client[0]][client[1]]
+
+    def meilleur_insert(self, prod_retirer, prod_change, client_change, copie_chemin_p, copie_distance, copie_capacite_restant):
+        """ Insére client_change à sa meilleur position dans copie_chemin_p, insére aussi son producteur si nécessaire
 
         Parameters
         ----------
@@ -209,6 +272,10 @@ class Heuristique:
         client_change : tupple, Le client que l'on veut insérer
 
         copie_chemin_p : list de tupple, Une copie du chemin parcouru par le producteur p
+
+        copie_distance : int, la distance parcourue dans le chemin copie_chemin_p
+
+        copie_capacite_restant : int, la capacite restante du producteur parcourant le chemin copie_chemin_p
         """
         # tableau contenant l'index où client_change est inséré et le coût de cet insertion,
         # si son producteur est inséré resultat contiendra aussi ses informations
@@ -226,7 +293,7 @@ class Heuristique:
 
         client_precedent_retirer = self.chemin[prod_retirer][position_client_change-1]
         client_suivant_retirer = self.chemin[prod_retirer][position_client_change + 1]
-        # TODO prendre en compte les contraintes
+
         # cout de retirer le client client_change du chemin du producteur prod_retirer
         cout_retirer = 0 - self.dist[client_change[0], client_change[1], client_precedent_retirer[0], client_precedent_retirer[1]] \
                        - self.dist[client_change[0], client_change[1], client_suivant_retirer[0], client_suivant_retirer[1]] \
@@ -234,6 +301,7 @@ class Heuristique:
 
         cout_best_insertion = 99999999
         meilleur_insert_position = -1
+        cout_distance_plus = 0
         for insert_position in range(position_prod, len(copie_chemin_p) - 1):
             client_precedent_insert = copie_chemin_p[insert_position]
             client_suivant_insert = copie_chemin_p[insert_position + 1]
@@ -247,6 +315,7 @@ class Heuristique:
 
             if cout_best_insertion > cout_change:
                 cout_best_insertion = cout_change
+                cout_distance_plus = cout_insert
                 meilleur_insert_position = insert_position
 
         resultat.append(meilleur_insert_position)
@@ -255,6 +324,7 @@ class Heuristique:
         copie_chemin_p.insert(meilleur_insert_position+1, client_change)
 
         # si le producteur doit être inséré avant le client client_change alors on trouve sa meilleur position d'insertion ainssi que son coût
+        cout_distance_plus_prod = 0
         if insert_prod:
             cout_best_insertion_prod = 9999999
             meilleur_insert_position_prod = -1
@@ -270,10 +340,23 @@ class Heuristique:
 
                 if cout_best_insertion_prod > cout_change_prod:
                     cout_best_insertion_prod = cout_change_prod
+                    cout_distance_plus_prod = cout_best_insertion_prod
                     meilleur_insert_position_prod = insert_prod_position
             copie_chemin_p.insert(meilleur_insert_position_prod+1, producteur_change)
             resultat.append(meilleur_insert_position_prod)
             resultat.append(cout_best_insertion_prod)
+
+        # si la contrainte de poids n'est plus respectée alors on arrete
+        if (copie_capacite_restant - self.qte_p[client_change[0]][client_change[1]]) < 0:
+            return 0
+        else:
+            resultat.append(copie_capacite_restant - self.qte_p[client_change[0]][client_change[1]])
+
+        # si la contrainte de detour max n'est plus respectée alors on arrete
+        if cout_distance_plus_prod + cout_distance_plus + copie_distance > self.detour_max[copie_chemin_p[0][0]]:
+            return 1
+        else:
+            resultat.append(cout_distance_plus_prod + cout_distance_plus + copie_distance)
 
         return resultat
 
@@ -302,44 +385,3 @@ class Heuristique:
         for i in range(n):
             p_voisin.append(distance[i][0])
         return p_voisin
-
-    def heuristique_alea(self):
-        # choisit aléatoirement un producteur à qui on enlevera un client de son chemin
-        rand_prod = random.randint(0, self.nb_prod - 1)
-
-        # vérifie que le producteur ne soit pas seul sur son chemin
-        while len(self.chemin[rand_prod]) <= 2:
-            rand_prod = random.randint(0, self.nb_prod - 1)
-
-        # choisit un client aléatoire sur le chemin de ce producteur
-        rand_client = random.randint(1, len(self.chemin[rand_prod]) - 2)
-
-        # vérifie si le point enlevé est bien un client
-        while self.chemin[rand_prod][rand_client][1] == 0:
-            rand_prod = random.randint(0, self.nb_prod - 1)
-            rand_client = random.randint(1, len(self.chemin[rand_prod]) - 2)
-
-        self.retirer_alea(rand_prod, rand_client)
-        self.inserer_alea(rand_prod, rand_client)
-
-    def retirer_alea(self, rand_prod, rand_client):
-        # TODO si on enleve un client il faut vérifier si c'est le seul qui vient de son producteur et si c'est le cas il faut enlever son producteur et faire la mise à jour sur la fonction objective
-        client_precedent = self.chemin[rand_prod - 1][rand_client - 1]
-        client_suivant = self.chemin[rand_prod + 1][rand_client + 1]
-        client = self.chemin[rand_prod][rand_client]
-
-        # mise à jour de la fonction objectif après avoir retiré le client
-        self.fonc_obj = self.fonc_obj \
-                        - self.dist[client[0], client[1], client_precedent[0], client_precedent[1]] \
-                        - self.dist[client[0], client[1], client_suivant[0], client_suivant[1]] \
-                        + self.dist[client_precedent[0], client_precedent[1], client_suivant[0], client_suivant[1]]
-
-        self.chemin[rand_prod].pop(rand_client)
-
-    def inserer_alea(self, rand_prod, rand_client):
-        # TODO choisir un producteur aléatoire
-        # TODO vérifier si le producteur du client à insérer est dans le chemin du producteur où on va inserer
-        # TODO inserer le client à un endroit aléatoire (après son producteur si il est déjà dans le chemin) en respectant les contraintes
-        # TODO si le producteur du client insérer n'est pas déjà dans ce chemin, l'insérer avant
-        # TODO changer la fonction objetif à l'insertion du client puis à l'insertion du producteur
-        print("b")
