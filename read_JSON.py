@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Mon Jan 20 18:32:19 2020
 
@@ -10,6 +9,9 @@ import json
 
 
 class dataMultiProd:
+    """
+    Classe permettant de parser les fichier json
+    """
 
     def __init__(self, nb_prod=0, nb_clients_p=[], nb_clients_max=0, qte_p=[], windows_a_p=[], windows_b_p=[],
                  s_loc_x_p=[], s_loc_y_p=[], capacite_p=[], dist=[], detour_max=0):
@@ -27,12 +29,26 @@ class dataMultiProd:
 
 
 def read(adresse):
+    """
+    Ouvre le fchier à partir de son adresse
+
+    :param adresse: string, adresse du fichier json
+
+    :return: le résultat de la fonction jsonToClassDonnee
+    """
     with open(adresse) as json_data:
         data_dict = json.load(json_data)
         return jsonToClassDonnee(data_dict)
 
 
 def jsonToClassDonnee(data):
+    """
+    Fonction permettant de parser le fichier json et d'en créer un objet dataMultiProd
+
+    :param data: les données du fichier json
+
+    :return: un objet dataMultiProd
+    """
     nb_prod = len(data['liste_producteurs'])
     nb_clients_p = np.zeros(nb_prod, dtype=int)
 

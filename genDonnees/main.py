@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue Aug 27 11:51:12 2019
-
+Main permettant de générer une instance de donnée aléatoire et d'en créer un fichier json
 @author: chere
 """
 
@@ -9,8 +9,8 @@ Created on Tue Aug 27 11:51:12 2019
 import Donnee
 import json
 
-nb_prod = 100
-nb_clients_moy = 5
+nb_prod = 10
+nb_clients_moy = 3
 perimetre = 50
 taux_clients = 0.5
 qte_moy = 10
@@ -23,8 +23,8 @@ detour_max = 0.7
 
 ClassDonnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
 data_dict = ClassDonnee.fctReturnDictCreationMultiProducteur()
-with open("fichier_donnees_100prod.json", "w") as f:
-    json.dump(data_dict, f,indent=5)
+with open("fichier_donnees_5prod_compare.json", "w") as f:
+    json.dump(data_dict, f, indent=5)
     
 
 

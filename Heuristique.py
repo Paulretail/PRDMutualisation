@@ -1,3 +1,7 @@
+"""
+Fichier comportant l'heuristique
+"""
+
 import random
 import numpy as np
 import math
@@ -6,23 +10,26 @@ from FctClustering import centreFct
 
 
 class Heuristique:
+    """
+    Classe permettant d'utiliser l'heuristique
+    """
 
     def __init__(self, opt_mono, class_donnee, mono_chemin):
         self.nb_prod = class_donnee.nb_prod
-        self.nb_clients_p = class_donnee.nb_clients_p
-        self.nb_clients_max = class_donnee.nb_clients_max
-        self.qte_p = class_donnee.qte_p
-        self.windows_a_p = class_donnee.windows_a_p
-        self.windows_b_p = class_donnee.windows_b_p
-        self.s_loc_x_p = class_donnee.s_loc_x_p
-        self.s_loc_y_p = class_donnee.s_loc_y_p
-        self.capacite_p = class_donnee.capacite_p
-        self.dist = class_donnee.dist
+        self.nb_clients_p = class_donnee.nb_clients_p.copy()
+        self.nb_clients_max = class_donnee.nb_clients_max.copy()
+        self.qte_p = class_donnee.qte_p.copy()
+        self.windows_a_p = class_donnee.windows_a_p.copy()
+        self.windows_b_p = class_donnee.windows_b_p.copy()
+        self.s_loc_x_p = class_donnee.s_loc_x_p.copy()
+        self.s_loc_y_p = class_donnee.s_loc_y_p.copy()
+        self.capacite_p = class_donnee.capacite_p.copy()
+        self.dist = class_donnee.dist.copy()
 
         # tableau à 2 dimension représentant le chemin parcouru par tous les producteurs
         # mono_chemin[0] permet d'accéder au chemin parcouru par le producteur 1 sous la forme d'une liste de point
         # chaque point est représenté par un tuple permettant de savoir à quel point il correspondait sur les données initiales
-        self.chemin = mono_chemin
+        self.chemin = mono_chemin.copy()
 
         # tableau représentant la capacité restante sur ce chemin
         self.capacite_restant_p = []
@@ -43,14 +50,24 @@ class Heuristique:
         # TODO et un tableau faisant l'opposé dim : nbProd
 
     def heuristique(self):
-        pas_ameliore = 0
+        """
+        Fonction principale réalisant l'heuristique
+        Elle choisit un producteur aléatoire, choisit des clients par leqeul passe ce producteur
+        Puis en essaie d'enlever puis d'inserer ces clients dans des chemin d'autre producteur plus proche
+        L'heuristique mémorise la meilleur insertion possible (vers quel producteur, combien de clients à insérer et où)
+        et réalise cette insertion afin de créer une nouvelle solution
+        On répéte ces étapes 500 fois, en mémorisant à chaque fois que l'on a une nouvelle meilleur solution
+
+        :return: tupple contenant le chemin de la meilleur solution et son poids
+        """
         fonc_obj_initial = np.sum(self.fonc_obj)
         fonc_obj_mono = np.sum(self.fonc_obj)
         best_sol = np.sum(self.fonc_obj)
+        best_sols = self.fonc_obj.copy()
         compteur = 0
-        best_iteration = 0
+        best_iteration = -1
         best_chemin = self.chemin
-        while compteur <= 500:  # TODO revoir le critere d'arret (20 itteration sans ameliorer best sol me parrait bien)
+        while compteur <= 500:
             # choisit aléatoirement un producteur à qui on enlevera un client de son chemin
             rand_prod = random.randint(0, self.nb_prod - 1)
 
@@ -68,14 +85,18 @@ class Heuristique:
             # nb_change = random.randint(1, self.prod_dans_chemin[rand_prod][rand_prod_change])
             # TODO changer les commentaires ici
 
-            # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
+            '''# Les deux premières livraisons d'un client sont considérée comme "urgente" et ne peuvent être réalisé que par lui-même
             if rand_prod == rand_prod_change:  # TODO justifier et corriger (cela provoque une erreur)
                 print("eeeeeeeeeeeeeeeeeeeeeeeeee",int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
                 print("dzdz",self.nb_clients_p[rand_prod])
+
+                # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
                 client_selectionne = random.sample(range(3, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
             else:
+                # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
                 client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
-
+'''
+            client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
             # liste des clients qui vont être modifiés
             client_change = [0 for _ in range(int(self.prod_dans_chemin[rand_prod][rand_prod_change]))]
 
@@ -177,41 +198,36 @@ class Heuristique:
 
             '''print("chemin apres", self.chemin)
             print("1", self.fonc_obj)'''
-            print(compteur, "    ", np.sum(self.fonc_obj))
+            # print(compteur, "    ", np.sum(self.fonc_obj))
 
-            # si on a une amélioration on continue sinon on augmente le nombre de fois où l'on n'a pas eu d'amélioration d'affilée
-            # TODO changer les quand on s'arrete et comment on sauvegarde la meilleur solution
-            if fonc_obj_initial < np.sum(self.fonc_obj):
-                pas_ameliore += 1
-            else:
-                if best_sol > np.sum(self.fonc_obj):
-                    # mémorise la meilleur solution
-                    best_sol = np.sum(self.fonc_obj)
-                    best_chemin = self.chemin.copy()
-                    best_iteration = compteur
-                pas_ameliore = 0
+            if best_sol > np.sum(self.fonc_obj):
+                # mémorise la meilleur solution
+                best_sol = np.sum(self.fonc_obj)
+                best_sols = self.fonc_obj.copy()
+                best_chemin = self.chemin.copy()
+                best_iteration = compteur
             fonc_obj_initial = np.sum(self.fonc_obj)
             compteur += 1
-        print("compteur", compteur)
+        '''print("compteur", compteur)
         print("fonc_obj_mono", fonc_obj_mono)
         print("best_sol", best_sol)
         print("ratio : ", (1 - (best_sol / fonc_obj_mono)) * 100, "%")
         print("best_iteration", best_iteration)
-        print("best_chemin", best_chemin)
-        print("prod_dans_chemin", self.prod_dans_chemin)
+        print("best_chemin", best_chemin)'''
+        # print("prod_dans_chemin", self.prod_dans_chemin)
+        return best_chemin, best_sols
 
     def retirer_inserer_client(self, client, prod_retirer, prod_ajouter, position_insert):
-        """ Retire puis insére le client
+        """
+        Retire puis insére le client
 
-        Parameters
-        ----------
-        client : tupple, Le client que l'on va insérer
+        :param client: tupple, Le client que l'on va insérer
 
-        prod_retirer : int, Le producteur auquel on va retirer des points de son chemin
+        :param prod_retirer: int, Le producteur auquel on va retirer des points de son chemin
 
-        prod_ajouter : int, Le producteur auquel on va rajouter le client
+        :param prod_ajouter: int, Le producteur auquel on va rajouter le client
 
-        position_insert : int, La position où on va inserer le client
+        :param position_insert: int, La position où on va inserer le client
         """
 
         position_client = self.chemin[prod_retirer].index(client)
@@ -261,21 +277,22 @@ class Heuristique:
         self.capacite_restant_p[prod_ajouter] = self.capacite_restant_p[prod_ajouter] - self.qte_p[client[0]][client[1]]
 
     def meilleur_insert(self, prod_retirer, prod_change, client_change, copie_chemin_p, copie_distance, copie_capacite_restant):
-        """ Insére client_change à sa meilleur position dans copie_chemin_p, insére aussi son producteur si nécessaire
+        """
+        Insére client_change à sa meilleur position dans copie_chemin_p, insére aussi son producteur si nécessaire
 
-        Parameters
-        ----------
-        prod_retirer : int, Le producteur auquel on va retirer des points de son chemin
+        :param prod_retirer: int, Le producteur auquel on va retirer des points de son chemin
 
-        prod_change : int, Le producteur auquel appartenait les points modifiées originellement
+        :param prod_change: int, Le producteur auquel appartenait les points modifiées originellement
 
-        client_change : tupple, Le client que l'on veut insérer
+        :param client_change: tupple, Le client que l'on veut insérer
 
-        copie_chemin_p : list de tupple, Une copie du chemin parcouru par le producteur p
+        :param copie_chemin_p: list de tupple, Une copie du chemin parcouru par le producteur p
 
-        copie_distance : int, la distance parcourue dans le chemin copie_chemin_p
+        :param copie_distance: int, la distance parcourue dans le chemin copie_chemin_p
 
-        copie_capacite_restant : int, la capacite restante du producteur parcourant le chemin copie_chemin_p
+        :param copie_capacite_restant: int, la capacite restante du producteur parcourant le chemin copie_chemin_p
+
+        :return: resultat, array, tableau contenant l'index où client_change est inséré et le coût de cet insertion, si son producteur est inséré resultat contiendra aussi ses informations
         """
         # tableau contenant l'index où client_change est inséré et le coût de cet insertion,
         # si son producteur est inséré resultat contiendra aussi ses informations
@@ -361,13 +378,14 @@ class Heuristique:
         return resultat
 
     def prod_voisin(self, prod, n):
-        """ Retourne dans l'ordre les n producteurs les plus proches du producteur prod
+        """
+        Retourne dans l'ordre les n producteurs les plus proches du producteur prod
 
-        Parameters
-        ----------
-        prod : int, Le producteur dont on cherche les voisins
+        :param prod: int, Le producteur dont on cherche les voisins
 
-        n : int, Taille du voisinage recherché
+        :param n: int, Taille du voisinage recherché
+
+        :return: p_voisin, array de int, les n producteurs les plus proches du producteur prod (dans l'ordre)
         """
         # utilise la fonction centreFct pour trouver les centres de gravité des producteurs
         centre_prod = centreFct(self.nb_prod, self.s_loc_x_p, self.s_loc_y_p, self.nb_clients_p)

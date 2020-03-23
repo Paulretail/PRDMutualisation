@@ -6,7 +6,14 @@ import xml.etree.ElementTree as ET
 
 
 def parse(nom_fichier):
-    """parse le fichier donne en entree et retourne les donnees qu il contient dans l objet dataMultiProd"""
+    """
+    parse le fichier xml donné en entree et retourne les donnees qu il contient dans l objet dataMultiProd
+
+    :param nom_fichier: string le om du fichier
+
+    :return: l'objet class_donnee rempli avec les donnees du fichier xml
+    """
+
     tree = ET.parse(nom_fichier)
     root = tree.getroot()
 

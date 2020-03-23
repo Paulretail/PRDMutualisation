@@ -16,6 +16,9 @@ def norm_l2(x1, y1, x2, y2):
 
 
 class dataMonoProd:
+    """
+    Classe permettant de stocker toutes les données sur un producteur et ses clients
+    """
     
     def __init__(self, nb_clients=0, qte=[], windows_a=[], windows_b=[], s_loc_x=[], s_loc_y=[], capacite=0):
         print("-----------------------------")
@@ -37,6 +40,9 @@ class dataMonoProd:
          
          
 class dataMultiProd:
+    """
+    Classe permettant de stocker toutes les données sur les producteurs et leurs clients
+    """
    
     def __init__(self, nb_prod=0, nb_clients_p=[], nb_clients_max=0, qte_p=[], windows_a_p=[], windows_b_p=[], s_loc_x_p=[], s_loc_y_p=[], capacite_p=[], dist=[], detour_max=0):
         self.nb_prod = nb_prod                  # nombre de producteurs
@@ -52,6 +58,13 @@ class dataMultiProd:
         self.detour_max = detour_max            # detour maximum accepte, en pourcentage suplémentaire par rapport a sa solution idéale
 
     def fctReturnDictCreationMultiProducteur(self):
+        """
+        Transforme dataMultiProd en un dictionnaire.
+
+        Cette fonction sert principalement pour écrire les données dans un fichier json
+
+        :return: data_dict, un dictionnaire contenant tous les données de dataMultiProd
+        """
         data_dict = {}
         producteur_list = []
         for p0 in range(0, self.nb_prod):
@@ -82,7 +95,32 @@ class dataMultiProd:
 
 
 def CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max):
-   
+    """
+    Lance la fonction CreationMonoProducteur pour créer plusieurs producteurs
+
+    :param nb_prod: int, nombre de producteurs à créer
+
+    :param nb_clients_moy: int, nombre de client moyen de ce producteur
+
+    :param perimetre: int, distance max entre le producteur et ses clients
+
+    :param taux_clients: float, taux de client que l'on désire
+
+    :param qte_moy: float, quantité moyenne livrée
+
+    :param taux_qte: float, taux de la quantité livrée
+
+    :param windows_moy: float, moyenne permettant de définir la fenêtre de temps
+
+    :param taux_windows:  float, taux permettant de définir la fenêtre de temps
+
+    :param taux_remplissage: float, taux permettant de définir la capacité
+
+    :param detour_max: float, pourcentage permettant de calculer le détour max des producteurs
+
+    :return: une instance de la classe dataMultiProd contenant tous les producteurs et leurs clients générés
+    """
+
     nb_clients_p = np.zeros(nb_prod, dtype=int)
     nb_clients_max = int(nb_clients_moy*(1+taux_clients))+1  # pour la taille des tableaux
     s_loc_x_p = np.zeros((nb_prod, nb_clients_max))
@@ -101,6 +139,29 @@ def CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qt
 
 
 def CreationMonoProducteur(nb_clients_moy, nb_clients_max, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage):
+    """
+    Créer un producteur aléatoirement
+
+    :param nb_clients_moy: int, nombre de client moyen de ce producteur
+
+    :param nb_clients_max: int, nombre de client max de ce producteur
+
+    :param perimetre: int, distance max entre le producteur et ses clients
+
+    :param taux_clients: float, taux de client que l'on désire
+
+    :param qte_moy: float, quantité moyenne livrée
+
+    :param taux_qte: float, taux de la quantité livrée
+
+    :param windows_moy: float, moyenne permettant de définir la fenêtre de temps
+
+    :param taux_windows:  float, taux permettant de définir la fenêtre de temps
+
+    :param taux_remplissage:  float, taux permettant de définir la capacité
+
+    :return: les données générées à partir des parametres
+    """
     # nb_clients_moy,perimetre,taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage
     # nb_clients \in [nb_clients-taux_clients, nb_clients+taux_clients]
     nb_clients = nb_clients_max  # nb_clients_max sert juste à donne une borne pour les tailles des vecteurs
@@ -137,6 +198,21 @@ def CreationMonoProducteur(nb_clients_moy, nb_clients_max, perimetre, taux_clien
 
 
 def distance(s_loc_x_p, s_loc_y_p, nb_prod, nb_clients_max):
+    """
+    Permet de calculer la matrice des distances
+
+    :param s_loc_x_p: tableau de tableau de int, liste des coordonnées en x des clients et producteurs
+
+    :param s_loc_y_p: tableau de tableau de int, liste des coordonnées en y des clients et producteurs
+
+    :param nb_prod: int, nombre de producteurs
+
+    :param nb_clients_max: int, nombre de client maximum possédé par un même producteur
+
+    :return: la maatrice des distances sous la forme d'un tableau à 4 dim,
+    dim 1 et 2 pour désigner le point avec son producteur et le l'id du client
+    et dim 3 et 4 pour désigner de la même façon l'autre point
+    """
     # matrice sous forme [prod1, prod2, client_prod_1, client_prod2]
     matrice_dist = np.zeros((nb_prod, nb_clients_max, nb_prod, nb_clients_max))
 

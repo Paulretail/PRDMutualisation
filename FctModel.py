@@ -13,6 +13,11 @@ from docplex.mp.model import Model
 
 
 class ModelMonoProd:
+    """
+    Classe permettant de construire le model qui va résoudre le problème sans coopérations des producteur avec une méthode exacte
+    La résolution de ce problème va nous permettre de nous donner une solution initial avec laquel travailler pour notre heuristique
+    de plus elle va nous donner le chemin idéal pour chacundes producteurs, nous permettant ainssi de calculer le détour max
+    """
 
     def __init__(self, class_donnee):
 
@@ -28,6 +33,11 @@ class ModelMonoProd:
         self.dist = class_donnee.dist
 
     def modelCreationSolve(self):
+        """
+        Construit le model pour chacundes producteur et le résoud
+
+        :return: la distance parcouru par chacun des producteurs ainsi que leur chemin
+        """
             
         M = 1000000
 
@@ -42,7 +52,6 @@ class ModelMonoProd:
 
             # Variables
 
-
             Xdimensions = [(i, j) for i in range(0, self.nb_clients_p[p]) for j in range(0, self.nb_clients_p[p])]
             x = mdl.integer_var_dict(Xdimensions, name="x")
             # date arrivé
@@ -50,11 +59,11 @@ class ModelMonoProd:
             # date de retour
             d_retour = mdl.continuous_var(name='d_f')
 
-            # Objective function
+            # Fonction objective
             # mdl.minimize(mdl.sum(self.mat_tij[i][j] * x[i,j]  for i in self.S_all for j in self.S_all))
             mdl.minimize(d_retour - D[0])
 
-            # Constraints
+            # Contraintes
 
             # un arc sortant et rentrant pour chaque site
             mdl.add_constraints(mdl.sum(x[i, j] for i in range(0, self.nb_clients_p[p]) if i != j) == 1 for j in range(0, self.nb_clients_p[p]))
@@ -96,7 +105,10 @@ class ModelMonoProd:
         return opt, mono_chemins
 
 
-class NotreModel:  
+class NotreModel:
+    """
+    Classe permettant de construire le model qui va résoudre le problème de mutualisation des producteur avec une méthode exacte
+    """
 
     def __init__(self, ClassDonnee, clusters_tab, cluster_num, optMono):
 
@@ -134,7 +146,11 @@ class NotreModel:
             print(p0, "--", self.nb_clients_p[p0])
      
     def modelCreation(self):
-        """construit le problème"""
+        """
+        Construit le model pour résoudre le problème de mutualisation des producteurs avec une méthode exacte
+
+        :return: le model
+        """
 
         M = 10000
         # ------------- BEGIN: Create the mode ----------------------------------------
@@ -243,10 +259,11 @@ class NotreModel:
 
         return mdl
 
-    def modelSolve(self, affiche=True):
-        """résoud le problème avec une méthode exacte"""
+    def modelSolve(self):
+        """
+        Résoud le model
+
+        :return: la solution du model
+        """
         solution = self.mdl.solve()
-        #            if affiche == True:
-        #                print(self.mdl.solve_details)
-        #                print(solution)
         return solution

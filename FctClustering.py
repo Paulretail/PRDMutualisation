@@ -13,6 +13,19 @@ from sklearn.cluster import KMeans
 
 
 def centreFct(nb_prod, s_loc_x_p, s_loc_y_p, nb_clients_p):
+    """
+    Permet de calculer le centre de gravité pour chacun des producteurs et de leurs clients
+
+    :param nb_prod: nombre de producteurs
+
+    :param s_loc_x_p: tableau de tableau de int, liste des coordonnées en x des clients et producteurs
+
+    :param s_loc_y_p: tableau de tableau de int, liste des coordonnées en y des clients et producteurs
+
+    :param nb_clients_p: tableau de int, nombre de client de chacun des producteurs
+
+    :return: tableau de tupple, contenant les coordonnées en x et y de chacun des centres de gravités
+    """
     # retourne un centre pour chaque producteur (egal à la moyenne des x de ses sites + dépot)
     centre_prod = np.zeros((nb_prod, 2))
 
@@ -24,6 +37,9 @@ def centreFct(nb_prod, s_loc_x_p, s_loc_y_p, nb_clients_p):
 
 
 class ClusteringDistances:
+    """
+    Classe s'occupant du clustering des producteurs
+    """
 
     def __init__(self, class_donnee, nb_clusters):
 
@@ -35,6 +51,11 @@ class ClusteringDistances:
         self.nb_clusters = nb_clusters
           
     def ClusteringDistancesSolve(self):
+        """
+        Grace a l'algorithme KMeans créer les clusters et les affiche grace à matplotlib
+
+        :return: tableau de int, indicant l'id du cluster dans lequel chaque producteur est
+        """
 
         centre_prod = np.zeros((self.nb_prod, 2))
         centre_prod = centreFct(self.nb_prod, self.s_loc_x_p, self.s_loc_y_p, self.nb_clients_p)
@@ -73,10 +94,16 @@ class ClusteringDistances:
             plt.scatter(self.s_loc_x_p[p, 1:self.nb_clients_p[p]+1], self.s_loc_y_p[p, 1:self.nb_clients_p[p]+1], marker='o', c=color[p])
         plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='red', marker='8')
         plt.show()
-
         return kmeans.labels_
 
     def generate_colors(self, n):
+        """
+        Génére des couleurs aléatoire pour pouvoir différencier chacun des producteurs
+
+        :param n: int, nombre de couleurs à générer
+
+        :return: tableau de string symbolisant les couleur en exadécimal
+        """
         ret = []
         r = lambda: random.randint(0, 255)
         for i in range(n):

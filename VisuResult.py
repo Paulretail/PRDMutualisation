@@ -11,6 +11,9 @@ import numpy as np
 
 
 class visuPlot:
+    """
+    Classe permettant de visualiser les résultats (le chemin parcouru par chaque producteur) après la méthode exacte
+    """
 
     def __init__(self, ClassDonnee, mdl, solution, clusters_tab, cluster_num):
 
@@ -33,6 +36,9 @@ class visuPlot:
         self.solution = solution
 
     def afficheResult(self):
+        """
+        Affiche le chemin parcouru par chaque producteur grace à matplotlib
+        """
 
         plt.figure()
         color = ['red', 'blue', 'green', 'black', 'yellow', 'purple', 'orange', 'grey']
@@ -72,7 +78,10 @@ class visuPlot:
             print(self.mdl.solve_details)
 
 
-class visu_plot_heuristique:
+class VisuPlotHeuristique:
+    """
+    Classe permettant de visualiser les résultats (le chemin parcouru par chaque producteur) après l'heuristique
+    """
     def __init__(self, class_donnee, chemin):
 
         self.nb_prod = class_donnee.nb_prod
@@ -115,6 +124,13 @@ class visu_plot_heuristique:
         plt.show()
 
     def generer_couleurs(self, n):
+        """
+        Génére des couleurs aléatoire pour pouvoir différencier chacun des producteurs
+
+        :param n: int, nombre de couleurs à générer
+
+        :return: tableau de string symbolisant les couleur en exadécimal
+        """
         ret = []
         r = lambda: random.randint(0, 255)
         for i in range(n):
