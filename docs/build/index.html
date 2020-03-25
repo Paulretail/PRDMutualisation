@@ -1,0 +1,515 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Welcome to PRDMutualisation’s documentation! &#8212; Documentation PRDMutualisation 1</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="welcome-to-prdmutualisation-s-documentation">
+<h1>Welcome to PRDMutualisation’s documentation!<a class="headerlink" href="#welcome-to-prdmutualisation-s-documentation" title="Lien permanent vers ce titre">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="mains">
+<h1>Mains<a class="headerlink" href="#mains" title="Lien permanent vers ce titre">¶</a></h1>
+<p>main_compare</p>
+<span class="target" id="module-mains.main_compare"></span><p>Main permettant de comparer la méthode exacte avec cluster et l’heuritique sans cluster</p>
+<p>main_test_heuristique</p>
+<span class="target" id="module-mains.main_test_heuristique"></span><p>Main permettant faire tourner l’heuristique plusieurs fois afin de simplifier les tests</p>
+<p>main_visualisation</p>
+<span class="target" id="module-mains.main_visualisation"></span><p>Main permettant de visualiser la solution pour un cas particulier et l’enregistre dans un fichier</p>
+<p>genDonnees.main</p>
+<span class="target" id="module-genDonnees.main"></span><p>Created on Tue Aug 27 11:51:12 2019
+Main permettant de générer une instance de donnée aléatoire et d’en créer un fichier json
+&#64;author: chere</p>
+</div>
+<div class="section" id="module-Donnee">
+<span id="donnee"></span><h1>Donnee<a class="headerlink" href="#module-Donnee" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Created on Tue Aug 27 13:18:24 2019</p>
+<p>&#64;author: gaetan.galisot</p>
+<dl class="function">
+<dt id="Donnee.CreationMonoProducteur">
+<code class="sig-prename descclassname">Donnee.</code><code class="sig-name descname">CreationMonoProducteur</code><span class="sig-paren">(</span><em class="sig-param">nb_clients_moy</em>, <em class="sig-param">nb_clients_max</em>, <em class="sig-param">perimetre</em>, <em class="sig-param">taux_clients</em>, <em class="sig-param">qte_moy</em>, <em class="sig-param">taux_qte</em>, <em class="sig-param">windows_moy</em>, <em class="sig-param">taux_windows</em>, <em class="sig-param">taux_remplissage</em><span class="sig-paren">)</span><a class="headerlink" href="#Donnee.CreationMonoProducteur" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Créer un producteur aléatoirement</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_clients_moy</strong> – int, nombre de client moyen de ce producteur</p></li>
+<li><p><strong>nb_clients_max</strong> – int, nombre de client max de ce producteur</p></li>
+<li><p><strong>perimetre</strong> – int, distance max entre le producteur et ses clients</p></li>
+<li><p><strong>taux_clients</strong> – float, taux de client que l’on désire</p></li>
+<li><p><strong>qte_moy</strong> – float, quantité moyenne livrée</p></li>
+<li><p><strong>taux_qte</strong> – float, taux de la quantité livrée</p></li>
+<li><p><strong>windows_moy</strong> – float, moyenne permettant de définir la fenêtre de temps</p></li>
+<li><p><strong>taux_windows</strong> – float, taux permettant de définir la fenêtre de temps</p></li>
+<li><p><strong>taux_remplissage</strong> – float, taux permettant de définir la capacité</p></li>
+</ul>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>les données générées à partir des parametres</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="Donnee.CreationMultiProducteur">
+<code class="sig-prename descclassname">Donnee.</code><code class="sig-name descname">CreationMultiProducteur</code><span class="sig-paren">(</span><em class="sig-param">nb_prod</em>, <em class="sig-param">nb_clients_moy</em>, <em class="sig-param">perimetre</em>, <em class="sig-param">taux_clients</em>, <em class="sig-param">qte_moy</em>, <em class="sig-param">taux_qte</em>, <em class="sig-param">windows_moy</em>, <em class="sig-param">taux_windows</em>, <em class="sig-param">taux_remplissage</em>, <em class="sig-param">detour_max</em><span class="sig-paren">)</span><a class="headerlink" href="#Donnee.CreationMultiProducteur" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Lance la fonction CreationMonoProducteur pour créer plusieurs producteurs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_prod</strong> – int, nombre de producteurs à créer</p></li>
+<li><p><strong>nb_clients_moy</strong> – int, nombre de client moyen de ce producteur</p></li>
+<li><p><strong>perimetre</strong> – int, distance max entre le producteur et ses clients</p></li>
+<li><p><strong>taux_clients</strong> – float, taux de client que l’on désire</p></li>
+<li><p><strong>qte_moy</strong> – float, quantité moyenne livrée</p></li>
+<li><p><strong>taux_qte</strong> – float, taux de la quantité livrée</p></li>
+<li><p><strong>windows_moy</strong> – float, moyenne permettant de définir la fenêtre de temps</p></li>
+<li><p><strong>taux_windows</strong> – float, taux permettant de définir la fenêtre de temps</p></li>
+<li><p><strong>taux_remplissage</strong> – float, taux permettant de définir la capacité</p></li>
+<li><p><strong>detour_max</strong> – float, pourcentage permettant de calculer le détour max des producteurs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>une instance de la classe dataMultiProd contenant tous les producteurs et leurs clients générés</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="Donnee.dataMonoProd">
+<em class="property">class </em><code class="sig-prename descclassname">Donnee.</code><code class="sig-name descname">dataMonoProd</code><span class="sig-paren">(</span><em class="sig-param">nb_clients=0</em>, <em class="sig-param">qte=[]</em>, <em class="sig-param">windows_a=[]</em>, <em class="sig-param">windows_b=[]</em>, <em class="sig-param">s_loc_x=[]</em>, <em class="sig-param">s_loc_y=[]</em>, <em class="sig-param">capacite=0</em><span class="sig-paren">)</span><a class="headerlink" href="#Donnee.dataMonoProd" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de stocker toutes les données sur un producteur et ses clients</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="Donnee.dataMultiProd">
+<em class="property">class </em><code class="sig-prename descclassname">Donnee.</code><code class="sig-name descname">dataMultiProd</code><span class="sig-paren">(</span><em class="sig-param">nb_prod=0</em>, <em class="sig-param">nb_clients_p=[]</em>, <em class="sig-param">nb_clients_max=0</em>, <em class="sig-param">qte_p=[]</em>, <em class="sig-param">windows_a_p=[]</em>, <em class="sig-param">windows_b_p=[]</em>, <em class="sig-param">s_loc_x_p=[]</em>, <em class="sig-param">s_loc_y_p=[]</em>, <em class="sig-param">capacite_p=[]</em>, <em class="sig-param">dist=[]</em>, <em class="sig-param">detour_max=0</em><span class="sig-paren">)</span><a class="headerlink" href="#Donnee.dataMultiProd" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de stocker toutes les données sur les producteurs et leurs clients</p>
+<dl class="method">
+<dt id="Donnee.dataMultiProd.fctReturnDictCreationMultiProducteur">
+<code class="sig-name descname">fctReturnDictCreationMultiProducteur</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#Donnee.dataMultiProd.fctReturnDictCreationMultiProducteur" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Transforme dataMultiProd en un dictionnaire.</p>
+<p>Cette fonction sert principalement pour écrire les données dans un fichier json</p>
+<dl class="field-list simple">
+<dt class="field-odd">Renvoie</dt>
+<dd class="field-odd"><p>data_dict, un dictionnaire contenant tous les données de dataMultiProd</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="Donnee.distance">
+<code class="sig-prename descclassname">Donnee.</code><code class="sig-name descname">distance</code><span class="sig-paren">(</span><em class="sig-param">s_loc_x_p</em>, <em class="sig-param">s_loc_y_p</em>, <em class="sig-param">nb_prod</em>, <em class="sig-param">nb_clients_max</em><span class="sig-paren">)</span><a class="headerlink" href="#Donnee.distance" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Permet de calculer la matrice des distances</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>s_loc_x_p</strong> – tableau de tableau de int, liste des coordonnées en x des clients et producteurs</p></li>
+<li><p><strong>s_loc_y_p</strong> – tableau de tableau de int, liste des coordonnées en y des clients et producteurs</p></li>
+<li><p><strong>nb_prod</strong> – int, nombre de producteurs</p></li>
+<li><p><strong>nb_clients_max</strong> – int, nombre de client maximum possédé par un même producteur</p></li>
+</ul>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>la maatrice des distances sous la forme d’un tableau à 4 dim,</p>
+</dd>
+</dl>
+<p>dim 1 et 2 pour désigner le point avec son producteur et le l’id du client
+et dim 3 et 4 pour désigner de la même façon l’autre point</p>
+</dd></dl>
+
+</div>
+<div class="section" id="parserdonnee">
+<h1>ParserDonnee<a class="headerlink" href="#parserdonnee" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Pour parser les fichiers xml</p>
+<span class="target" id="module-ParserDonnee"></span><dl class="function">
+<dt id="ParserDonnee.parse">
+<code class="sig-prename descclassname">ParserDonnee.</code><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">nom_fichier</em><span class="sig-paren">)</span><a class="headerlink" href="#ParserDonnee.parse" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>parse le fichier xml donné en entree et retourne les donnees qu il contient dans l objet dataMultiProd</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><p><strong>nom_fichier</strong> – string le om du fichier</p>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>l’objet class_donnee rempli avec les donnees du fichier xml</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p>Pour parser les fichiers json</p>
+<span class="target" id="module-read_JSON"></span><p>Created on Mon Jan 20 18:32:19 2020</p>
+<p>&#64;author: chere</p>
+<dl class="class">
+<dt id="read_JSON.dataMultiProd">
+<em class="property">class </em><code class="sig-prename descclassname">read_JSON.</code><code class="sig-name descname">dataMultiProd</code><span class="sig-paren">(</span><em class="sig-param">nb_prod=0</em>, <em class="sig-param">nb_clients_p=[]</em>, <em class="sig-param">nb_clients_max=0</em>, <em class="sig-param">qte_p=[]</em>, <em class="sig-param">windows_a_p=[]</em>, <em class="sig-param">windows_b_p=[]</em>, <em class="sig-param">s_loc_x_p=[]</em>, <em class="sig-param">s_loc_y_p=[]</em>, <em class="sig-param">capacite_p=[]</em>, <em class="sig-param">dist=[]</em>, <em class="sig-param">detour_max=0</em><span class="sig-paren">)</span><a class="headerlink" href="#read_JSON.dataMultiProd" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de parser les fichier json</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="read_JSON.jsonToClassDonnee">
+<code class="sig-prename descclassname">read_JSON.</code><code class="sig-name descname">jsonToClassDonnee</code><span class="sig-paren">(</span><em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#read_JSON.jsonToClassDonnee" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonction permettant de parser le fichier json et d’en créer un objet dataMultiProd</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><p><strong>data</strong> – les données du fichier json</p>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>un objet dataMultiProd</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="read_JSON.read">
+<code class="sig-prename descclassname">read_JSON.</code><code class="sig-name descname">read</code><span class="sig-paren">(</span><em class="sig-param">adresse</em><span class="sig-paren">)</span><a class="headerlink" href="#read_JSON.read" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Ouvre le fchier à partir de son adresse</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><p><strong>adresse</strong> – string, adresse du fichier json</p>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>le résultat de la fonction jsonToClassDonnee</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-Heuristique">
+<span id="heuristique"></span><h1>Heuristique<a class="headerlink" href="#module-Heuristique" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Fichier comportant l’heuristique</p>
+<dl class="class">
+<dt id="Heuristique.Heuristique">
+<em class="property">class </em><code class="sig-prename descclassname">Heuristique.</code><code class="sig-name descname">Heuristique</code><span class="sig-paren">(</span><em class="sig-param">opt_mono</em>, <em class="sig-param">class_donnee</em>, <em class="sig-param">mono_chemin</em><span class="sig-paren">)</span><a class="headerlink" href="#Heuristique.Heuristique" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant d’utiliser l’heuristique</p>
+<dl class="method">
+<dt id="Heuristique.Heuristique.heuristique">
+<code class="sig-name descname">heuristique</code><span class="sig-paren">(</span><em class="sig-param">cas=0</em><span class="sig-paren">)</span><a class="headerlink" href="#Heuristique.Heuristique.heuristique" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Fonction principale réalisant l’heuristique
+Elle choisit un producteur aléatoire, choisit des clients par leqeul passe ce producteur
+Puis en essaie d’enlever puis d’inserer ces clients dans des chemin d’autre producteur plus proche
+L’heuristique mémorise la meilleur insertion possible (vers quel producteur, combien de clients à insérer et où)
+et réalise cette insertion afin de créer une nouvelle solution
+On répéte ces étapes 500 fois, en mémorisant à chaque fois que l’on a une nouvelle meilleur solution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><p><strong>cas</strong> – type de model que l’on veut étudier avec l’heuristique</p>
+</dd>
+</dl>
+<p>si cas = 0 on étudie le model classique sans contraintes suplémentaires</p>
+<p>si cas = 1 on étudie le model avec 2 livraisons urgentes qui doivent être faite par le producteur original.
+Les livraisons urgentes sont les 2 premieres livraisons de chacun des producteurs</p>
+<p>si cas = 2 on étudie le model avec une limite de passage de 3 producteurs par chemin</p>
+<p>! dans le cas 1 il faut donc que les producteurs ai plus de 2 clients</p>
+<dl class="field-list simple">
+<dt class="field-odd">Renvoie</dt>
+<dd class="field-odd"><p>tupple contenant le chemin de la meilleur solution et son poids</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Heuristique.Heuristique.meilleur_insert">
+<code class="sig-name descname">meilleur_insert</code><span class="sig-paren">(</span><em class="sig-param">prod_retirer</em>, <em class="sig-param">prod_change</em>, <em class="sig-param">client_change</em>, <em class="sig-param">copie_chemin_p</em>, <em class="sig-param">copie_distance</em>, <em class="sig-param">copie_capacite_restant</em><span class="sig-paren">)</span><a class="headerlink" href="#Heuristique.Heuristique.meilleur_insert" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Insére client_change à sa meilleur position dans copie_chemin_p, insére aussi son producteur si nécessaire</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod_retirer</strong> – int, Le producteur auquel on va retirer des points de son chemin</p></li>
+<li><p><strong>prod_change</strong> – int, Le producteur auquel appartenait les points modifiées originellement</p></li>
+<li><p><strong>client_change</strong> – tupple, Le client que l’on veut insérer</p></li>
+<li><p><strong>copie_chemin_p</strong> – list de tupple, Une copie du chemin parcouru par le producteur p</p></li>
+<li><p><strong>copie_distance</strong> – int, la distance parcourue dans le chemin copie_chemin_p</p></li>
+<li><p><strong>copie_capacite_restant</strong> – int, la capacite restante du producteur parcourant le chemin copie_chemin_p</p></li>
+</ul>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>resultat, array, tableau contenant l’index où client_change est inséré et le coût de cet insertion, si son producteur est inséré resultat contiendra aussi ses informations</p>
+</dd>
+</dl>
+<p>0 si la contrainte de poids n’est pas respectée
+1 si la contrainte de détour max n’est pas respectée
+2 si lorsque nous somme dans le cas 2 le chemin copie_chemin_p a déjà le nombre maximum de producteur</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Heuristique.Heuristique.prod_voisin">
+<code class="sig-name descname">prod_voisin</code><span class="sig-paren">(</span><em class="sig-param">prod</em>, <em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#Heuristique.Heuristique.prod_voisin" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Retourne dans l’ordre les n producteurs les plus proches du producteur prod</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prod</strong> – int, Le producteur dont on cherche les voisins</p></li>
+<li><p><strong>n</strong> – int, Taille du voisinage recherché</p></li>
+</ul>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>p_voisin, array de int, les n producteurs les plus proches du producteur prod (dans l’ordre)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="Heuristique.Heuristique.retirer_inserer_client">
+<code class="sig-name descname">retirer_inserer_client</code><span class="sig-paren">(</span><em class="sig-param">client</em>, <em class="sig-param">prod_retirer</em>, <em class="sig-param">prod_ajouter</em>, <em class="sig-param">position_insert</em><span class="sig-paren">)</span><a class="headerlink" href="#Heuristique.Heuristique.retirer_inserer_client" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Retire puis insére le client</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>client</strong> – tupple, Le client que l’on va insérer</p></li>
+<li><p><strong>prod_retirer</strong> – int, Le producteur auquel on va retirer des points de son chemin</p></li>
+<li><p><strong>prod_ajouter</strong> – int, Le producteur auquel on va rajouter le client</p></li>
+<li><p><strong>position_insert</strong> – int, La position où on va inserer le client</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-FctClustering">
+<span id="clustering"></span><h1>Clustering<a class="headerlink" href="#module-FctClustering" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Created on Thu Nov  7 09:29:16 2019</p>
+<p>&#64;author: chere</p>
+<dl class="class">
+<dt id="FctClustering.ClusteringDistances">
+<em class="property">class </em><code class="sig-prename descclassname">FctClustering.</code><code class="sig-name descname">ClusteringDistances</code><span class="sig-paren">(</span><em class="sig-param">class_donnee</em>, <em class="sig-param">nb_clusters</em><span class="sig-paren">)</span><a class="headerlink" href="#FctClustering.ClusteringDistances" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe s’occupant du clustering des producteurs</p>
+<dl class="method">
+<dt id="FctClustering.ClusteringDistances.ClusteringDistancesSolve">
+<code class="sig-name descname">ClusteringDistancesSolve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FctClustering.ClusteringDistances.ClusteringDistancesSolve" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Grace a l’algorithme KMeans créer les clusters et les affiche grace à matplotlib</p>
+<dl class="field-list simple">
+<dt class="field-odd">Renvoie</dt>
+<dd class="field-odd"><p>tableau de int, indicant l’id du cluster dans lequel chaque producteur est</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="FctClustering.ClusteringDistances.generate_colors">
+<code class="sig-name descname">generate_colors</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#FctClustering.ClusteringDistances.generate_colors" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génére des couleurs aléatoire pour pouvoir différencier chacun des producteurs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><p><strong>n</strong> – int, nombre de couleurs à générer</p>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>tableau de string symbolisant les couleur en exadécimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="FctClustering.centreFct">
+<code class="sig-prename descclassname">FctClustering.</code><code class="sig-name descname">centreFct</code><span class="sig-paren">(</span><em class="sig-param">nb_prod</em>, <em class="sig-param">s_loc_x_p</em>, <em class="sig-param">s_loc_y_p</em>, <em class="sig-param">nb_clients_p</em><span class="sig-paren">)</span><a class="headerlink" href="#FctClustering.centreFct" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Permet de calculer le centre de gravité pour chacun des producteurs et de leurs clients</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nb_prod</strong> – nombre de producteurs</p></li>
+<li><p><strong>s_loc_x_p</strong> – tableau de tableau de int, liste des coordonnées en x des clients et producteurs</p></li>
+<li><p><strong>s_loc_y_p</strong> – tableau de tableau de int, liste des coordonnées en y des clients et producteurs</p></li>
+<li><p><strong>nb_clients_p</strong> – tableau de int, nombre de client de chacun des producteurs</p></li>
+</ul>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>tableau de tupple, contenant les coordonnées en x et y de chacun des centres de gravités</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-FctModel">
+<span id="modelexacte"></span><h1>ModelExacte<a class="headerlink" href="#module-FctModel" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Created on Mon Aug 26 18:51:49 2019</p>
+<p>&#64;author: gaetan.galisot</p>
+<dl class="class">
+<dt id="FctModel.ModelMonoProd">
+<em class="property">class </em><code class="sig-prename descclassname">FctModel.</code><code class="sig-name descname">ModelMonoProd</code><span class="sig-paren">(</span><em class="sig-param">class_donnee</em><span class="sig-paren">)</span><a class="headerlink" href="#FctModel.ModelMonoProd" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de construire le model qui va résoudre le problème sans coopérations des producteur avec une méthode exacte
+La résolution de ce problème va nous permettre de nous donner une solution initial avec laquel travailler pour notre heuristique
+de plus elle va nous donner le chemin idéal pour chacundes producteurs, nous permettant ainssi de calculer le détour max</p>
+<dl class="method">
+<dt id="FctModel.ModelMonoProd.modelCreationSolve">
+<code class="sig-name descname">modelCreationSolve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FctModel.ModelMonoProd.modelCreationSolve" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Construit le model pour chacundes producteur et le résoud</p>
+<dl class="field-list simple">
+<dt class="field-odd">Renvoie</dt>
+<dd class="field-odd"><p>la distance parcouru par chacun des producteurs ainsi que leur chemin</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="FctModel.NotreModel">
+<em class="property">class </em><code class="sig-prename descclassname">FctModel.</code><code class="sig-name descname">NotreModel</code><span class="sig-paren">(</span><em class="sig-param">ClassDonnee</em>, <em class="sig-param">clusters_tab</em>, <em class="sig-param">cluster_num</em>, <em class="sig-param">optMono</em><span class="sig-paren">)</span><a class="headerlink" href="#FctModel.NotreModel" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de construire le model qui va résoudre le problème de mutualisation des producteur avec une méthode exacte</p>
+<dl class="method">
+<dt id="FctModel.NotreModel.modelCreation">
+<code class="sig-name descname">modelCreation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FctModel.NotreModel.modelCreation" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Construit le model pour résoudre le problème de mutualisation des producteurs avec une méthode exacte</p>
+<dl class="field-list simple">
+<dt class="field-odd">Renvoie</dt>
+<dd class="field-odd"><p>le model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="FctModel.NotreModel.modelSolve">
+<code class="sig-name descname">modelSolve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#FctModel.NotreModel.modelSolve" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Résoud le model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Renvoie</dt>
+<dd class="field-odd"><p>la solution du model</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-VisuResult">
+<span id="visualisation"></span><h1>Visualisation<a class="headerlink" href="#module-VisuResult" title="Lien permanent vers ce titre">¶</a></h1>
+<p>Created on Tue Aug 27 12:32:11 2019</p>
+<p>&#64;author: gaetan.galisot</p>
+<dl class="class">
+<dt id="VisuResult.VisuPlotHeuristique">
+<em class="property">class </em><code class="sig-prename descclassname">VisuResult.</code><code class="sig-name descname">VisuPlotHeuristique</code><span class="sig-paren">(</span><em class="sig-param">class_donnee</em>, <em class="sig-param">chemin</em><span class="sig-paren">)</span><a class="headerlink" href="#VisuResult.VisuPlotHeuristique" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de visualiser les résultats (le chemin parcouru par chaque producteur) après l’heuristique</p>
+<dl class="method">
+<dt id="VisuResult.VisuPlotHeuristique.generer_couleurs">
+<code class="sig-name descname">generer_couleurs</code><span class="sig-paren">(</span><em class="sig-param">n</em><span class="sig-paren">)</span><a class="headerlink" href="#VisuResult.VisuPlotHeuristique.generer_couleurs" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Génére des couleurs aléatoire pour pouvoir différencier chacun des producteurs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Paramètres</dt>
+<dd class="field-odd"><p><strong>n</strong> – int, nombre de couleurs à générer</p>
+</dd>
+<dt class="field-even">Renvoie</dt>
+<dd class="field-even"><p>tableau de string symbolisant les couleur en exadécimal</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="VisuResult.visuPlot">
+<em class="property">class </em><code class="sig-prename descclassname">VisuResult.</code><code class="sig-name descname">visuPlot</code><span class="sig-paren">(</span><em class="sig-param">ClassDonnee</em>, <em class="sig-param">mdl</em>, <em class="sig-param">solution</em>, <em class="sig-param">clusters_tab</em>, <em class="sig-param">cluster_num</em><span class="sig-paren">)</span><a class="headerlink" href="#VisuResult.visuPlot" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Classe permettant de visualiser les résultats (le chemin parcouru par chaque producteur) après la méthode exacte</p>
+<dl class="method">
+<dt id="VisuResult.visuPlot.afficheResult">
+<code class="sig-name descname">afficheResult</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#VisuResult.visuPlot.afficheResult" title="Lien permanent vers cette définition">¶</a></dt>
+<dd><p>Affiche le chemin parcouru par chaque producteur grace à matplotlib</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Lien permanent vers ce titre">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Index du module</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Page de recherche</span></a></p></li>
+</ul>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">PRDMutualisation</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Recherche rapide</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2020, PaulRETAIL.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.4.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

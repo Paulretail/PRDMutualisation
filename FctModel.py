@@ -38,7 +38,7 @@ class ModelMonoProd:
 
         :return: la distance parcouru par chacun des producteurs ainsi que leur chemin
         """
-            
+
         M = 1000000
 
         mono_chemins = [[] for _ in range(self.nb_prod)]
@@ -154,7 +154,6 @@ class NotreModel:
 
         M = 10000
         # ------------- BEGIN: Create the mode ----------------------------------------
-
         mdl = Model('4C')
 
         # Declaration des variables

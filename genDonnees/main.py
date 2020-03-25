@@ -10,9 +10,9 @@ import Donnee
 import json
 
 nb_prod = 10
-nb_clients_moy = 3
+nb_clients_moy = 5
 perimetre = 50
-taux_clients = 0.5
+taux_clients = 0
 qte_moy = 10
 taux_qte = 0.6
 windows_moy = 300
@@ -23,7 +23,7 @@ detour_max = 0.7
 
 ClassDonnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
 data_dict = ClassDonnee.fctReturnDictCreationMultiProducteur()
-with open("fichier_donnees_5prod_compare.json", "w") as f:
+with open("fichier_donnees_10prod.json", "w") as f:
     json.dump(data_dict, f, indent=5)
     
 

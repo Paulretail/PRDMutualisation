@@ -47,9 +47,18 @@ class Heuristique:
         # instancie ce tableau
         for i in range(self.nb_prod):
             self.prod_dans_chemin[i][i] = self.nb_clients_p[i] - 1
-        # TODO et un tableau faisant l'opposé dim : nbProd
 
-    def heuristique(self):
+        # tableau permettant de savoir combien de producteur différent du producteur qui fait le chemin il y a dans chaque chemin
+        self.nb_prod_dans_chemin = [0 for _ in range(self.nb_prod)]
+
+        # Type de model que l'on étudie
+        # si cas = 0 on étudie le model classique sans contraintes suplémentaires
+        # si cas = 1 on étudie le model avec 2 livraisons urgentes qui doivent être faite par le producteur original.
+        # Les livraisons urgentes sont les 2 premieres livraisons de chacun des producteurs
+        # si cas = 2 on étudie le model avec une limite de passage de 3 producteurs par chemin
+        self.cas = 0
+
+    def heuristique(self, cas=0):
         """
         Fonction principale réalisant l'heuristique
         Elle choisit un producteur aléatoire, choisit des clients par leqeul passe ce producteur
@@ -58,8 +67,22 @@ class Heuristique:
         et réalise cette insertion afin de créer une nouvelle solution
         On répéte ces étapes 500 fois, en mémorisant à chaque fois que l'on a une nouvelle meilleur solution
 
+        :param cas: type de model que l'on veut étudier avec l'heuristique
+
+        si cas = 0 on étudie le model classique sans contraintes suplémentaires
+
+        si cas = 1 on étudie le model avec 2 livraisons urgentes qui doivent être faite par le producteur original.
+        Les livraisons urgentes sont les 2 premieres livraisons de chacun des producteurs
+
+        si cas = 2 on étudie le model avec une limite de passage de 3 producteurs par chemin
+
+        ! dans le cas 1 il faut donc que les producteurs ai plus de 2 clients
+
         :return: tupple contenant le chemin de la meilleur solution et son poids
         """
+
+        self.cas = cas
+
         fonc_obj_initial = np.sum(self.fonc_obj)
         fonc_obj_mono = np.sum(self.fonc_obj)
         best_sol = np.sum(self.fonc_obj)
@@ -76,29 +99,41 @@ class Heuristique:
                 rand_prod = random.randint(0, self.nb_prod - 1)
 
             # selectionne un producteur par lequel le producteur precedent (rand_prod) passe
-            # TODO peut etre amelioré
             rand_prod_change = random.randint(0, self.nb_prod - 1)
             while self.prod_dans_chemin[rand_prod][rand_prod_change] == 0:
                 rand_prod_change = random.randint(0, self.nb_prod - 1)
 
-            # nombre de point que l'on va retirer puis insérer
-            # nb_change = random.randint(1, self.prod_dans_chemin[rand_prod][rand_prod_change])
-            # TODO changer les commentaires ici
+            if cas == 1:
+                # on fait en sorte que si on doit modifier les clients sur le chemin de leur producteur de départ cela ne soit pas des clients urgents
+                # si c'est le cas on prend un nouveau producteur à modifier et d'autre clients à modifier
+                if rand_prod == rand_prod_change:
+                    while int(self.prod_dans_chemin[rand_prod][rand_prod_change]) < 3:
+                        rand_prod = random.randint(0, self.nb_prod - 1)
+                        while len(self.chemin[rand_prod]) <= 2:
+                            rand_prod = random.randint(0, self.nb_prod - 1)
 
-            '''# Les deux premières livraisons d'un client sont considérée comme "urgente" et ne peuvent être réalisé que par lui-même
-            if rand_prod == rand_prod_change:  # TODO justifier et corriger (cela provoque une erreur)
-                print("eeeeeeeeeeeeeeeeeeeeeeeeee",int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
-                print("dzdz",self.nb_clients_p[rand_prod])
+                        rand_prod_change = random.randint(0, self.nb_prod - 1)
+                        while self.prod_dans_chemin[rand_prod][rand_prod_change] == 0:
+                            rand_prod_change = random.randint(0, self.nb_prod - 1)
+                        if rand_prod != rand_prod_change:
+                            # les clients de rand_prod_change ne sont pas les clients de départ de rand_prod donc plus besoin de vérifier s'ils sont urgent
+                            break
 
-                # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
-                client_selectionne = random.sample(range(3, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
+            # On verifie si nous somme dans un cas avec livraisons urgentes ou non
+            if cas == 1:
+                # Les deux premières livraisons d'un client sont considérée comme "urgente" et ne peuvent être réalisé que par lui-même
+                if rand_prod == rand_prod_change:
+                    # liste tirée aléatoirement en prenant en compte les livraisons urgentes
+                    client_selectionne = random.sample(range(3, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change])-2)
+                else:
+                    # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
+                    client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
             else:
                 # liste tirée aléatoirement des index dans le chemin des clients qui vont être modifiés
                 client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
-'''
-            client_selectionne = random.sample(range(1, int(self.prod_dans_chemin[rand_prod][rand_prod_change]) + 1), int(self.prod_dans_chemin[rand_prod][rand_prod_change]))
+
             # liste des clients qui vont être modifiés
-            client_change = [0 for _ in range(int(self.prod_dans_chemin[rand_prod][rand_prod_change]))]
+            client_change = [0 for _ in range(len(client_selectionne))]
 
             # remplit client_change avec la liste des clients qui vont être modifiés
             position = -1
@@ -141,6 +176,9 @@ class Heuristique:
                     elif resultat == 1:
                         # detour max atteint : on arrête
                         break
+                    elif resultat == 2:
+                        # nombre de producteur maximum dans le chemin de p atteint
+                        break
                     elif len(resultat) > 4:
                         # On doit ajouter le producteur en plus du point
                         insert_position[0] = resultat[2]
@@ -161,14 +199,6 @@ class Heuristique:
                         meilleur_nb_client_insert = n
                         meilleur_insert_position = insert_position
 
-            '''print("chemin avant", self.chemin)
-            print("client change", client_change)
-            print("meilleur_nb_client_insert", meilleur_nb_client_insert + 1)
-            print("meilleur_insert_position", meilleur_insert_position)
-            print("meilleur_producteur", meilleur_producteur)
-            print("0", self.fonc_obj)'''
-            # print("0", np.sum(self.fonc_obj))
-
             # si aucun point en peut être inséré car ne respectant pas les contraintes
             if len(meilleur_insert_position) < 1:
                 continue
@@ -188,6 +218,7 @@ class Heuristique:
                                 + self.dist[producteur[0], producteur[1], client_suivant_insert[0], client_suivant_insert[1]] \
                                 - self.dist[client_precedent_insert[0], client_precedent_insert[1], client_suivant_insert[0], client_suivant_insert[1]]
 
+                self.nb_prod_dans_chemin[meilleur_producteur] = self.nb_prod_dans_chemin[meilleur_producteur] + 1
                 self.chemin[meilleur_producteur].insert(meilleur_insert_position[0]+1, producteur)
 
             # fait les meilleurs changements trouvés précédement
@@ -195,10 +226,6 @@ class Heuristique:
 
                 client = client_change[c]
                 self.retirer_inserer_client(client, rand_prod, meilleur_producteur, meilleur_insert_position[c+1])
-
-            '''print("chemin apres", self.chemin)
-            print("1", self.fonc_obj)'''
-            # print(compteur, "    ", np.sum(self.fonc_obj))
 
             if best_sol > np.sum(self.fonc_obj):
                 # mémorise la meilleur solution
@@ -208,13 +235,7 @@ class Heuristique:
                 best_iteration = compteur
             fonc_obj_initial = np.sum(self.fonc_obj)
             compteur += 1
-        '''print("compteur", compteur)
-        print("fonc_obj_mono", fonc_obj_mono)
-        print("best_sol", best_sol)
-        print("ratio : ", (1 - (best_sol / fonc_obj_mono)) * 100, "%")
-        print("best_iteration", best_iteration)
-        print("best_chemin", best_chemin)'''
-        # print("prod_dans_chemin", self.prod_dans_chemin)
+
         return best_chemin, best_sols
 
     def retirer_inserer_client(self, client, prod_retirer, prod_ajouter, position_insert):
@@ -250,6 +271,9 @@ class Heuristique:
         # alors il faut aussi retirer ce producteur de la liste
         if self.prod_dans_chemin[prod_retirer][client[0]] == 0 and client[0] != prod_retirer:
             producteur = (client[0], 0)
+
+            self.nb_prod_dans_chemin[prod_retirer] = self.nb_prod_dans_chemin[prod_retirer] - 1
+
             position_prod = self.chemin[prod_retirer].index(producteur)
             client_precedent_retirer = self.chemin[prod_retirer][position_prod - 1]
             client_suivant_retirer = self.chemin[prod_retirer][position_prod + 1]
@@ -293,6 +317,9 @@ class Heuristique:
         :param copie_capacite_restant: int, la capacite restante du producteur parcourant le chemin copie_chemin_p
 
         :return: resultat, array, tableau contenant l'index où client_change est inséré et le coût de cet insertion, si son producteur est inséré resultat contiendra aussi ses informations
+        0 si la contrainte de poids n'est pas respectée
+        1 si la contrainte de détour max n'est pas respectée
+        2 si lorsque nous somme dans le cas 2 le chemin copie_chemin_p a déjà le nombre maximum de producteur
         """
         # tableau contenant l'index où client_change est inséré et le coût de cet insertion,
         # si son producteur est inséré resultat contiendra aussi ses informations
@@ -305,6 +332,11 @@ class Heuristique:
         except ValueError:
             position_prod = 0
             insert_prod = True
+
+        # si on est dans le cas 2 et que l'on doit insérer un nouveau producteur dans copie_chemin_p on verifie qu'il n'a pas déjà le nombre maximum de producteur dans son chemin
+        if self.cas == 2 and insert_prod:
+            if self.nb_prod_dans_chemin[copie_chemin_p[0][0]] >= 3:
+                return 2
 
         position_client_change = self.chemin[prod_retirer].index(client_change)
 

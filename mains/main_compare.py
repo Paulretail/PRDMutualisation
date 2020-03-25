@@ -12,7 +12,7 @@ import Heuristique
 import read_JSON
 
 
-nb_prod = 10
+nb_prod = 5
 nb_clients_moy = 3
 perimetre = 50
 taux_clients = 0.5
@@ -40,27 +40,17 @@ else:
     classe_donnee = Donnee.CreationMultiProducteur(nb_prod, nb_clients_moy, perimetre, taux_clients, qte_moy, taux_qte, windows_moy, taux_windows, taux_remplissage, detour_max)
 
 
-'''print("nb_prod : " + str(classe_donnee.nb_prod))
-print("nb_clients_p : " + str(classe_donnee.nb_clients_p))
-print("nb_clients_max : " + str(classe_donnee.nb_clients_max))
-print("qte_p : " + str(classe_donnee.qte_p))
-print("windows_a_p : " + str(classe_donnee.windows_a_p))
-print("windows_b_p : " + str(classe_donnee.windows_b_p))
-print("s_loc_x_p : " + str(classe_donnee.s_loc_x_p))
-print("s_loc_y_p : " + str(classe_donnee.s_loc_y_p))
-print("capacite_p : " + str(classe_donnee.capacite_p))
-#print("dist : " + str(classe_donnee.dist))
-print("detour_max : " + str(classe_donnee.detour_max))'''
-
-
 # Résolution du problème pour chaque producteurs (sans mutualisation)
 modMono = FctModel.ModelMonoProd(classe_donnee)
 optMono, mono_chemin = modMono.modelCreationSolve()
-print("optMono", optMono)
+
 
 # Résolution du problème sans cluster avec méthode aprochée
 heuristique = Heuristique.Heuristique(optMono, classe_donnee, mono_chemin)
 best_chemin, best_sol_heuristique = heuristique.heuristique()
+
+print("optMono",np.sum(optMono))
+print("best_sol_heuristique",np.sum(best_sol_heuristique))
 
 # Clustering des producteurs
 init = FctClustering.ClusteringDistances(classe_donnee, nb_clusters)
